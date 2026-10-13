@@ -1,69 +1,99 @@
-import Image from "next/image";
+import { createClient } from '@/lib/supabase/server'
+import { FeaturedEvent } from '@/components/home/FeaturedEvent'
+import { HeroFallback } from '@/components/home/HeroFallback'
+import { EventCard } from '@/components/events/EventCard'
+import { ScrollReveal } from '@/components/animations/ScrollReveal'
+import { BubbleField } from '@/components/animations/BubbleField'
+import { PageWrapper } from '@/components/layout/PageWrapper'
+import type { Event } from '@/types'
 
-export default function Home() {
+// Revalidate homepage every 60 seconds for featured event changes
+export const revalidate = 60
+
+async function getFeaturedEvent(): Promise<Event | null> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .eq('is_featured', true)
+    .eq('published', true)
+    .single()
+  if (error) return null
+  return data as Event
+}
+
+async function getUpcomingEvents(): Promise<Event[]> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .eq('published', true)
+    .order('starts_at', { ascending: true })
+    .limit(6)
+  if (error) return []
+  return (data ?? []) as Event[]
+}
+
+export default async function HomePage() {
+  const [featuredEvent, upcomingEvents] = await Promise.all([
+    getFeaturedEvent(),
+    getUpcomingEvents(),
+  ])
+
+  // Filter out the featured event from the upcoming grid
+  const otherEvents = upcomingEvents.filter((e) => !e.is_featured)
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <PageWrapper noTopPadding>
+      {/* Hero */}
+      {featuredEvent ? (
+        <FeaturedEvent event={featuredEvent} />
+      ) : (
+        <HeroFallback />
+      )}
+
+      {/* Upcoming events */}
+      {otherEvents.length > 0 && (
+        <section className="relative px-4 py-20 sm:px-6 lg:px-8">
+          <BubbleField count={6} className="opacity-50" />
+          <div className="relative z-10 mx-auto max-w-7xl">
+            <ScrollReveal>
+              <h2 className="mb-2 text-xs font-semibold uppercase tracking-[0.3em] text-accent">
+                Coming Up
+              </h2>
+              <h3 className="mb-10 text-3xl font-bold text-text-primary">
+                Upcoming Events
+              </h3>
+            </ScrollReveal>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {otherEvents.map((event, i) => (
+                <ScrollReveal key={event.id} delay={i * 80}>
+                  <EventCard event={event} />
+                </ScrollReveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* About the club strip */}
+      <section className="relative overflow-hidden border-y border-border bg-surface-1 px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl text-center">
+          <ScrollReveal>
+            <h2 className="mb-4 text-3xl font-bold text-text-primary">What is C.O.D.E.?</h2>
+            <p className="mb-6 text-base leading-relaxed text-text-secondary">
+              C.O.D.E. &mdash; Community of Data Engineers &mdash; is the official technical club
+              of the Data Science Department at RNS Institute of Technology, Bengaluru.
+              We exist to bridge the gap between academic learning and real-world data engineering.
+            </p>
+            <p className="text-base leading-relaxed text-text-secondary">
+              Through hands-on workshops, collaborative hackathons, and industry interactions,
+              we help students develop practical skills in data science, machine learning,
+              data engineering, and software development.
+            </p>
+          </ScrollReveal>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+      </section>
+    </PageWrapper>
+  )
 }

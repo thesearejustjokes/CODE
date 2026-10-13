@@ -1,26 +1,288 @@
 @import "tailwindcss";
 
+/* ============================================================
+   C.O.D.E. Club — Design Tokens
+   Centralized here. To redesign the theme, update these values.
+   Business logic is NOT in this file.
+   ============================================================ */
+
+/* ── Colour Tokens ─────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Base */
+  --background: #0d0d0d;
+  --foreground: #f0ede8;
+
+  /* Surfaces */
+  --surface-0: #0d0d0d;   /* page background */
+  --surface-1: #161616;   /* card / panel background */
+  --surface-2: #1f1f1f;   /* elevated surface */
+  --surface-3: #2a2a2a;   /* hover state */
+
+  /* Text */
+  --text-primary: #f0ede8;     /* main body text */
+  --text-secondary: #8a8a8a;   /* muted / metadata */
+  --text-tertiary: #555555;    /* placeholder / disabled */
+
+  /* Accent — electric green, used selectively */
+  --accent: #4ade80;          /* primary accent */
+  --accent-dim: #22c55e;      /* slightly muted accent */
+  --accent-glow: rgba(74, 222, 128, 0.15); /* glow backdrop */
+  --accent-border: rgba(74, 222, 128, 0.3);
+
+  /* Borders */
+  --border: #2a2a2a;
+  --border-subtle: #1f1f1f;
+
+  /* Status colours */
+  --status-confirmed: #4ade80;
+  --status-pending: #fbbf24;
+  --status-rejected: #f87171;
+  --status-cancelled: #6b7280;
+  --status-review: #60a5fa;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-accent: 0 0 24px rgba(74, 222, 128, 0.12);
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Spacing scale (custom values beyond Tailwind defaults) */
+  --space-section: 5rem;
+
+  /* Border radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Animation */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ── shadcn/ui CSS variable bridge ─────────────────────── */
+  --radius: 0.5rem;
+  --ring: var(--accent);
 }
 
+/* ── Tailwind v4 theme extension ───────────────────────────── */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+
+  --color-accent: var(--accent);
+  --color-accent-dim: var(--accent-dim);
+  --color-accent-glow: var(--accent-glow);
+
+  --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+
+  --color-status-confirmed: var(--status-confirmed);
+  --color-status-pending: var(--status-pending);
+  --color-status-rejected: var(--status-rejected);
+  --color-status-cancelled: var(--status-cancelled);
+  --color-status-review: var(--status-review);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* shadcn/ui compatibility */
+  --color-card: var(--surface-1);
+  --color-card-foreground: var(--text-primary);
+  --color-popover: var(--surface-2);
+  --color-popover-foreground: var(--text-primary);
+  --color-primary: var(--accent);
+  --color-primary-foreground: #0d0d0d;
+  --color-secondary: var(--surface-2);
+  --color-secondary-foreground: var(--text-primary);
+  --color-muted: var(--surface-2);
+  --color-muted-foreground: var(--text-secondary);
+  --color-accent-bg: var(--surface-3);
+  --color-accent-foreground: var(--text-primary);
+  --color-destructive: #f87171;
+  --color-destructive-foreground: #0d0d0d;
+  --color-input: var(--surface-2);
+  --color-ring: var(--accent);
+  --radius: var(--radius-md);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Base styles ───────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* ── Focus styles ──────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Scrollbar (webkit) ────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface-1);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--surface-3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* ── Selection ─────────────────────────────────────────────── */
+::selection {
+  background: rgba(74, 222, 128, 0.25);
+  color: var(--text-primary);
+}
+
+/* ── Typography utilities ──────────────────────────────────── */
+.text-gradient-accent {
+  background: linear-gradient(135deg, var(--accent) 0%, #86efac 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-subtle {
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Glow effects ──────────────────────────────────────────── */
+.glow-accent {
+  box-shadow: var(--shadow-accent);
+}
+
+.glow-accent-border {
+  border-color: var(--accent-border);
+  box-shadow: 0 0 16px var(--accent-glow);
+}
+
+/* ── Section spacing ───────────────────────────────────────── */
+.section-padding {
+  padding-top: var(--space-section);
+  padding-bottom: var(--space-section);
+}
+
+/* ── Bubble animation ──────────────────────────────────────── */
+@keyframes bubble-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.3);
+  }
+  20% {
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-120px) scale(1.1);
+  }
+}
+
+@keyframes bubble-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  60% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-glow);
+  pointer-events: none;
+  animation: bubble-rise var(--duration, 2s) var(--ease-out) forwards;
+}
+
+/* ── Scroll-reveal ─────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Reduced motion ────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  .bubble {
+    display: none;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── Status badge colours ──────────────────────────────────── */
+.status-confirmed   { color: var(--status-confirmed); }
+.status-pending     { color: var(--status-pending); }
+.status-rejected    { color: var(--status-rejected); }
+.status-cancelled   { color: var(--status-cancelled); }
+.status-review      { color: var(--status-review); }
