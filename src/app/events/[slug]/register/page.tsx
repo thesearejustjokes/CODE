@@ -1,11 +1,10 @@
-import { createClient } from '@/lib/supabase/server'
+import { getEventBySlug } from '@/lib/supabase/public'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { RegistrationForm } from '@/components/registration/RegistrationForm'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { isDeadlinePassed } from '@/lib/utils'
-import type { Event } from '@/types'
 import type { Metadata } from 'next'
 
 interface Props {
@@ -14,35 +13,20 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const supabase = await createClient()
-  const { data } = await supabase
-    .from('events')
-    .select('title')
-    .eq('slug', slug)
-    .eq('published', true)
-    .single()
+  const event = await getEventBySlug(slug)
 
   return {
-    title: data ? `Register for ${data.title}` : 'Register for Event',
+    title: event ? `Register for ${event.title}` : 'Register for Event',
   }
 }
 
 export default async function RegisterPage({ params }: Props) {
   const { slug } = await params
-  const supabase = await createClient()
+  const event = await getEventBySlug(slug)
 
-  const { data, error } = await supabase
-    .from('events')
-    .select('*')
-    .eq('slug', slug)
-    .eq('published', true)
-    .single()
-
-  if (error || !data) {
+  if (!event) {
     notFound()
   }
-
-  const event = data as Event
 
   // If registrations are closed or deadline has passed
   const isClosed = !event.registration_open || isDeadlinePassed(event.registration_deadline)

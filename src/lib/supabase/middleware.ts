@@ -1,11 +1,25 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { isSupabaseConfigured } from '@/lib/supabase/config'
 
 /**
- * Refreshes the Supabase session on every request.
- * Called from the root middleware.ts.
+ * Guards /admin routes and validates the admin session.
+ * Public routes bypass this entirely via middleware matcher config.
  */
 export async function updateSession(request: NextRequest) {
+  // Allow /admin/login without auth check
+  if (request.nextUrl.pathname.startsWith('/admin/login')) {
+    return NextResponse.next({ request })
+  }
+
+  // If Supabase credentials are not configured yet, redirect safely
+  if (!isSupabaseConfigured()) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/admin/login'
+    url.searchParams.set('reason', 'unauthenticated')
+    return NextResponse.redirect(url)
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -29,18 +43,20 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // Refresh session (do not remove — required for server component auth)
-  const { data: { user } } = await supabase.auth.getUser()
+  try {
+    const { data: { user } } = await supabase.auth.getUser()
 
-  // Protect /admin routes
-  const isAdminRoute =
-    request.nextUrl.pathname.startsWith('/admin') &&
-    !request.nextUrl.pathname.startsWith('/admin/login')
-
-  if (isAdminRoute && !user) {
+    if (!user) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/admin/login'
+      url.searchParams.set('redirected', '1')
+      return NextResponse.redirect(url)
+    }
+  } catch (err) {
+    console.error('Middleware auth check error:', err)
     const url = request.nextUrl.clone()
     url.pathname = '/admin/login'
-    url.searchParams.set('redirected', '1')
+    url.searchParams.set('reason', 'unauthenticated')
     return NextResponse.redirect(url)
   }
 

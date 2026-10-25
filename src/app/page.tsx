@@ -1,38 +1,13 @@
-import { createClient } from '@/lib/supabase/server'
+import { getFeaturedEvent, getUpcomingEvents } from '@/lib/supabase/public'
 import { FeaturedEvent } from '@/components/home/FeaturedEvent'
 import { HeroFallback } from '@/components/home/HeroFallback'
 import { EventCard } from '@/components/events/EventCard'
 import { ScrollReveal } from '@/components/animations/ScrollReveal'
 import { BubbleField } from '@/components/animations/BubbleField'
 import { PageWrapper } from '@/components/layout/PageWrapper'
-import type { Event } from '@/types'
 
-// Revalidate homepage every 60 seconds for featured event changes
+// Revalidate homepage every 60 seconds
 export const revalidate = 60
-
-async function getFeaturedEvent(): Promise<Event | null> {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('events')
-    .select('*')
-    .eq('is_featured', true)
-    .eq('published', true)
-    .single()
-  if (error) return null
-  return data as Event
-}
-
-async function getUpcomingEvents(): Promise<Event[]> {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('events')
-    .select('*')
-    .eq('published', true)
-    .order('starts_at', { ascending: true })
-    .limit(6)
-  if (error) return []
-  return (data ?? []) as Event[]
-}
 
 export default async function HomePage() {
   const [featuredEvent, upcomingEvents] = await Promise.all([

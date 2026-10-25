@@ -1,8 +1,7 @@
-import { createClient } from '@/lib/supabase/server'
+import { getAllEventsCatalog } from '@/lib/supabase/public'
 import { EventCard } from '@/components/events/EventCard'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { ScrollReveal } from '@/components/animations/ScrollReveal'
-import type { Event } from '@/types'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -11,32 +10,6 @@ export const metadata: Metadata = {
 }
 
 export const revalidate = 60
-
-async function getEvents() {
-  const supabase = await createClient()
-  const now = new Date().toISOString()
-
-  const [upcoming, past] = await Promise.all([
-    supabase
-      .from('events')
-      .select('*')
-      .eq('published', true)
-      .or(`ends_at.is.null,ends_at.gte.${now}`)
-      .order('starts_at', { ascending: true }),
-    supabase
-      .from('events')
-      .select('*')
-      .eq('published', true)
-      .lt('ends_at', now)
-      .order('ends_at', { ascending: false })
-      .limit(12),
-  ])
-
-  return {
-    upcoming: (upcoming.data ?? []) as Event[],
-    past: (past.data ?? []) as Event[],
-  }
-}
 
 function EmptyState({ label }: { label: string }) {
   return (
@@ -47,7 +20,7 @@ function EmptyState({ label }: { label: string }) {
 }
 
 export default async function EventsPage() {
-  const { upcoming, past } = await getEvents()
+  const { upcoming, past } = await getAllEventsCatalog()
 
   return (
     <PageWrapper>

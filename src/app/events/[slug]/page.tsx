@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { getEventBySlug } from '@/lib/supabase/public'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { ScrollReveal } from '@/components/animations/ScrollReveal'
 import { CountdownTimer } from '@/components/animations/CountdownTimer'
@@ -17,35 +17,17 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const supabase = await createClient()
-  const { data } = await supabase
-    .from('events')
-    .select('title, short_description')
-    .eq('slug', slug)
-    .eq('published', true)
-    .single()
+  const event = await getEventBySlug(slug)
 
-  if (!data) return { title: 'Event Not Found' }
+  if (!event) return { title: 'Event Not Found' }
 
   return {
-    title: data.title,
-    description: data.short_description ?? undefined,
+    title: event.title,
+    description: event.short_description ?? undefined,
   }
 }
 
 export const revalidate = 60
-
-async function getEvent(slug: string): Promise<Event | null> {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('events')
-    .select('*')
-    .eq('slug', slug)
-    .eq('published', true)
-    .single()
-  if (error) return null
-  return data as Event
-}
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -62,7 +44,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export default async function EventDetailPage({ params }: Props) {
   const { slug } = await params
-  const event = await getEvent(slug)
+  const event = await getEventBySlug(slug)
 
   if (!event) notFound()
 

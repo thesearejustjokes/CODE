@@ -30,7 +30,7 @@ export function HeroFallback() {
         <h1 className="mb-6 text-5xl font-bold leading-tight tracking-tight sm:text-6xl lg:text-7xl">
           <span className="text-gradient-accent">C.O.D.E.</span>
           <br />
-          <span className="text-text-primary">Club</span>
+          <span className="text-text-primary">CLUB</span>
         </h1>
         <p className="mx-auto mb-3 max-w-xl text-lg leading-relaxed text-text-secondary">
           Community of Data Engineers

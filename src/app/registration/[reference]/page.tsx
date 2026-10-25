@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import type { Metadata } from 'next'
 import type { Event as ClubEvent } from '@/types'
+import { isSupabaseConfigured, withTimeout } from '@/lib/supabase/config'
 
 interface Props {
   params: Promise<{ reference: string }>
@@ -68,10 +69,13 @@ function StatusIndicator({ status }: { status: string }) {
 export default async function RegistrationStatusPage({ params }: Props) {
   const { reference } = await params
 
-  // Fetch using service client (bypasses RLS to read strictly by unguessable token)
+  if (!isSupabaseConfigured()) {
+    notFound()
+  }
+
   const supabase = createServiceClient()
 
-  const { data: team, error: teamError } = await supabase
+  const teamQuery = supabase
     .from('teams')
     .select(`
       id,
@@ -89,8 +93,11 @@ export default async function RegistrationStatusPage({ params }: Props) {
     `)
     .eq('public_reference', reference)
     .single()
+    .then(({ data, error }) => (error || !data ? null : data))
 
-  if (teamError || !team) {
+  const team = await withTimeout(teamQuery, null, 2500)
+
+  if (!team) {
     notFound()
   }
 

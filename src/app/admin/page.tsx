@@ -13,25 +13,54 @@ import {
   ExternalLink,
 } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
+import { isSupabaseConfigured, withTimeout } from '@/lib/supabase/config'
+import type { Event } from '@/types'
 
 export const dynamic = 'force-dynamic'
 
 async function getDashboardMetrics() {
+  if (!isSupabaseConfigured()) {
+    return {
+      totalRegistrations: 0,
+      confirmedTeams: 0,
+      pendingPaymentReviews: 0,
+      upcomingEventsCount: 0,
+      events: [],
+      eventCounts: {},
+    }
+  }
+
   const supabase = createServiceClient()
 
   const [
-    { count: totalRegistrations },
-    { count: confirmedTeams },
-    { count: pendingPaymentReviews },
-    { data: events },
-    { data: teamsByEvent },
-  ] = await Promise.all([
-    supabase.from('teams').select('*', { count: 'exact', head: true }),
-    supabase.from('teams').select('*', { count: 'exact', head: true }).eq('registration_status', 'confirmed'),
-    supabase.from('teams').select('*', { count: 'exact', head: true }).eq('registration_status', 'payment_review'),
-    supabase.from('events').select('*').order('created_at', { ascending: false }),
-    supabase.from('teams').select('event_id'),
-  ])
+    totalRegRes,
+    confirmedRes,
+    pendingRes,
+    eventsRes,
+    teamsRes,
+  ] = await withTimeout(
+    Promise.all([
+      supabase.from('teams').select('*', { count: 'exact', head: true }),
+      supabase.from('teams').select('*', { count: 'exact', head: true }).eq('registration_status', 'confirmed'),
+      supabase.from('teams').select('*', { count: 'exact', head: true }).eq('registration_status', 'payment_review'),
+      supabase.from('events').select('*').order('created_at', { ascending: false }),
+      supabase.from('teams').select('event_id'),
+    ]),
+    [
+      { count: 0 },
+      { count: 0 },
+      { count: 0 },
+      { data: [] },
+      { data: [] },
+    ] as any,
+    2500
+  )
+
+  const totalRegistrations = totalRegRes?.count || 0
+  const confirmedTeams = confirmedRes?.count || 0
+  const pendingPaymentReviews = pendingRes?.count || 0
+  const events = (eventsRes?.data || []) as Event[]
+  const teamsByEvent = teamsRes?.data || []
 
   // Count registrations by event
   const eventCounts: Record<string, number> = {}
