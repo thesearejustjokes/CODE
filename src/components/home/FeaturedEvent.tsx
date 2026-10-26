@@ -26,7 +26,7 @@ export function FeaturedEvent({ event }: FeaturedEventProps) {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(74,222,128,0.06) 0%, transparent 70%)',
+            'radial-gradient(ellipse 80% 50% at 50% 0%, var(--accent-glow) 0%, transparent 70%)',
         }}
         aria-hidden="true"
       />
@@ -117,6 +117,7 @@ export function FeaturedEvent({ event }: FeaturedEventProps) {
                 alt={`${event.title} banner`}
                 fill
                 className="object-cover"
+                unoptimized
                 priority
               />
             </div>

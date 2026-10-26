@@ -23,18 +23,18 @@
   --text-secondary: #8a8a8a;   /* muted / metadata */
   --text-tertiary: #555555;    /* placeholder / disabled */
 
-  /* Accent — electric green, used selectively */
-  --accent: #4ade80;          /* primary accent */
-  --accent-dim: #22c55e;      /* slightly muted accent */
-  --accent-glow: rgba(74, 222, 128, 0.15); /* glow backdrop */
-  --accent-border: rgba(74, 222, 128, 0.3);
+  /* Accent — electric vermilion / neon orange-red (C.O.D.E ID card identity) */
+  --accent: #FF462D;          /* primary accent from ID card branding */
+  --accent-dim: #E03622;      /* slightly deeper accent for hover / pressed states */
+  --accent-glow: rgba(255, 70, 45, 0.15); /* glow backdrop */
+  --accent-border: rgba(255, 70, 45, 0.35);
 
   /* Borders */
   --border: #2a2a2a;
   --border-subtle: #1f1f1f;
 
   /* Status colours */
-  --status-confirmed: #4ade80;
+  --status-confirmed: #34d399;
   --status-pending: #fbbf24;
   --status-rejected: #f87171;
   --status-cancelled: #6b7280;
@@ -44,7 +44,7 @@
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.6);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
-  --shadow-accent: 0 0 24px rgba(74, 222, 128, 0.12);
+  --shadow-accent: 0 0 24px rgba(255, 70, 45, 0.16);
 
   /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -165,13 +165,13 @@ body {
 
 /* ── Selection ─────────────────────────────────────────────── */
 ::selection {
-  background: rgba(74, 222, 128, 0.25);
+  background: rgba(255, 70, 45, 0.25);
   color: var(--text-primary);
 }
 
 /* ── Typography utilities ──────────────────────────────────── */
 .text-gradient-accent {
-  background: linear-gradient(135deg, var(--accent) 0%, #86efac 100%);
+  background: linear-gradient(135deg, #FFB0A0 0%, #FF7A66 50%, var(--accent) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

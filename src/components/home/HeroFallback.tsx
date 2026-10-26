@@ -3,22 +3,11 @@ import Link from 'next/link'
 export function HeroFallback() {
   return (
     <section className="relative flex min-h-[90vh] flex-col items-center justify-center overflow-hidden px-4 py-24 text-center">
-      {/* Background grid pattern */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage:
-            'linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-          opacity: 0.3,
-        }}
-        aria-hidden="true"
-      />
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 60% 40% at 50% 60%, rgba(74,222,128,0.08) 0%, transparent 70%)',
+            'radial-gradient(ellipse 60% 40% at 50% 60%, var(--accent-glow) 0%, transparent 70%)',
         }}
         aria-hidden="true"
       />

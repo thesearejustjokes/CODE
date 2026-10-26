@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <!-- Background gradients -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#080808"/>
+      <stop offset="50%" stop-color="#121212"/>
+      <stop offset="100%" stop-color="#180e0c"/>
+    </linearGradient>
+
+    <!-- Radial accent aura -->
+    <radialGradient id="accentGlow" cx="50%" cy="35%" r="50%">
+      <stop offset="0%" stop-color="#FF462D" stop-opacity="0.25"/>
+      <stop offset="50%" stop-color="#FF462D" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#FF462D" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Card gradient -->
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1c1c1c" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#111111" stop-opacity="0.95"/>
+    </linearGradient>
+
+    <!-- Text gradient -->
+    <linearGradient id="textGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="60%" stop-color="#FFA494"/>
+      <stop offset="100%" stop-color="#FF462D"/>
+    </linearGradient>
+
+    <!-- Prize gold gradient -->
+    <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFDF00"/>
+      <stop offset="100%" stop-color="#FFA500"/>
+    </linearGradient>
+
+    <pattern id="dotPattern" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.2" fill="#ffffff" fill-opacity="0.04"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+  <rect width="1200" height="630" fill="url(#dotPattern)"/>
+  <rect width="1200" height="630" fill="url(#accentGlow)"/>
+
+  <!-- Top institutional bar -->
+  <rect x="60" y="45" width="1080" height="1" fill="#FF462D" fill-opacity="0.3"/>
+  <rect x="60" y="45" width="180" height="2" fill="#FF462D"/>
+
+  <!-- Header text -->
+  <text x="60" y="80" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="700" letter-spacing="3" fill="#FF462D">RNS INSTITUTE OF TECHNOLOGY</text>
+  <text x="350" y="80" font-family="'Inter', sans-serif" font-size="13" fill="#888888">&bull;</text>
+  <text x="375" y="80" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="600" letter-spacing="2" fill="#aaaaaa">DEPT. OF CSE (DATA SCIENCE)</text>
+  <text x="1140" y="80" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="700" letter-spacing="3" fill="#ffffff">C.O.D.E.&copy;</text>
+
+  <!-- Main Arcade.C Title -->
+  <text x="60" y="160" font-family="'JetBrains Mono', monospace" font-size="15" font-weight="700" letter-spacing="4" fill="#FF462D">PRESENTS THE ULTIMATE TECHNICAL ARENA</text>
+  
+  <text x="60" y="270" font-family="'Inter', system-ui, sans-serif" font-size="110" font-weight="900" letter-spacing="-3" fill="url(#textGrad)">
+    Arcade.C
+  </text>
+
+  <!-- Subtitle Tagline -->
+  <text x="60" y="325" font-family="'Inter', system-ui, sans-serif" font-size="22" font-weight="500" fill="#cfcfcf">
+    A Three-Round Technical Showdown for 1st &amp; 2nd Year Engineers
+  </text>
+
+  <!-- 3 Round Display Cards -->
+  <!-- Round 1 -->
+  <g transform="translate(60, 370)">
+    <rect width="340" height="135" rx="10" fill="url(#cardGrad)" stroke="#262626" stroke-width="1.5"/>
+    <rect x="0" y="0" width="340" height="3" fill="#FF462D" rx="2"/>
+    <text x="24" y="35" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" letter-spacing="2" fill="#FF462D">ROUND 01 &bull; 100 PTS</text>
+    <text x="24" y="65" font-family="'Inter', sans-serif" font-size="18" font-weight="800" fill="#ffffff">SYNTAX SURGERY</text>
+    <text x="24" y="95" font-family="'Inter', sans-serif" font-size="12" fill="#8e8e8e">Debug &amp; rewrite broken C code on paper.</text>
+    <text x="24" y="115" font-family="'JetBrains Mono', monospace" font-size="11" fill="#666666">45–60 Mins &bull; No AI Allowed</text>
+  </g>
+
+  <!-- Round 2 -->
+  <g transform="translate(430, 370)">
+    <rect width="340" height="135" rx="10" fill="url(#cardGrad)" stroke="#262626" stroke-width="1.5"/>
+    <rect x="0" y="0" width="340" height="3" fill="#FF7A66" rx="2"/>
+    <text x="24" y="35" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" letter-spacing="2" fill="#FF7A66">ROUND 02 &bull; 100 PTS</text>
+    <text x="24" y="65" font-family="'Inter', sans-serif" font-size="18" font-weight="800" fill="#ffffff">PROMPT PIXEL</text>
+    <text x="24" y="95" font-family="'Inter', sans-serif" font-size="12" fill="#8e8e8e">Reverse prompt engineering in Bing Image AI.</text>
+    <text x="24" y="115" font-family="'JetBrains Mono', monospace" font-size="11" fill="#666666">3 Stages &bull; Visual Similarity Scoring</text>
+  </g>
+
+  <!-- Round 3 -->
+  <g transform="translate(800, 370)">
+    <rect width="340" height="135" rx="10" fill="url(#cardGrad)" stroke="#262626" stroke-width="1.5"/>
+    <rect x="0" y="0" width="340" height="3" fill="#FFA500" rx="2"/>
+    <text x="24" y="35" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" letter-spacing="2" fill="#FFA500">ROUND 03 &bull; 200 PTS</text>
+    <text x="24" y="65" font-family="'Inter', sans-serif" font-size="18" font-weight="800" fill="#ffffff">BID &amp; WIN AUCTION</text>
+    <text x="24" y="95" font-family="'Inter', sans-serif" font-size="12" fill="#8e8e8e">3 Mega-teams, 1000-pt auction &amp; hints.</text>
+    <text x="24" y="115" font-family="'JetBrains Mono', monospace" font-size="11" fill="#666666">1–1.5 Hours &bull; Strategy &amp; Problem Solving</text>
+  </g>
+
+  <!-- Bottom Details Bar -->
+  <g transform="translate(60, 535)">
+    <!-- Date badge -->
+    <rect width="240" height="50" rx="8" fill="#171717" stroke="#2b2b2b"/>
+    <circle cx="25" cy="25" r="5" fill="#FF462D"/>
+    <text x="42" y="24" font-family="'JetBrains Mono', monospace" font-size="10" letter-spacing="1.5" fill="#888888">EVENT DATE</text>
+    <text x="42" y="40" font-family="'Inter', sans-serif" font-size="14" font-weight="700" fill="#ffffff">30th October, 2026</text>
+
+    <!-- Prize badge -->
+    <rect x="260" width="230" height="50" rx="8" fill="#171717" stroke="#2b2b2b"/>
+    <text x="280" y="24" font-family="'JetBrains Mono', monospace" font-size="10" letter-spacing="1.5" fill="#FFDF00">CASH PRIZE</text>
+    <text x="280" y="40" font-family="'Inter', sans-serif" font-size="14" font-weight="700" fill="#FFDF00">&#8377;3,000 + Trophy</text>
+
+    <!-- Team Cap -->
+    <rect x="510" width="230" height="50" rx="8" fill="#171717" stroke="#2b2b2b"/>
+    <text x="530" y="24" font-family="'JetBrains Mono', monospace" font-size="10" letter-spacing="1.5" fill="#888888">SLOTS AVAILABLE</text>
+    <text x="530" y="40" font-family="'Inter', sans-serif" font-size="14" font-weight="700" fill="#ffffff">Max 18 Teams (2-3/team)</text>
+
+    <!-- Entry fee -->
+    <rect x="760" width="200" height="50" rx="8" fill="#171717" stroke="#2b2b2b"/>
+    <text x="780" y="24" font-family="'JetBrains Mono', monospace" font-size="10" letter-spacing="1.5" fill="#888888">ENTRY FEE</text>
+    <text x="780" y="40" font-family="'Inter', sans-serif" font-size="14" font-weight="700" fill="#ffffff">&#8377;200 / Team</text>
+
+    <!-- Watermark status -->
+    <rect x="980" width="160" height="50" rx="8" fill="#FF462D" fill-opacity="0.15" stroke="#FF462D" stroke-opacity="0.5"/>
+    <text x="1060" y="32" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="700" letter-spacing="1" fill="#FF462D">REGISTER NOW</text>
+  </g>
+</svg>

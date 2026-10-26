@@ -62,6 +62,7 @@ export default async function EventDetailPage({ params }: Props) {
             alt={`${event.title} banner`}
             fill
             className="object-cover"
+            unoptimized
             priority
           />
         ) : (

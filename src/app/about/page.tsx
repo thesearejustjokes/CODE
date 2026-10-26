@@ -1,6 +1,7 @@
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { ScrollReveal } from '@/components/animations/ScrollReveal'
 import { BubbleField } from '@/components/animations/BubbleField'
+import { TeamSection } from '@/components/about/TeamSection'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -69,21 +70,24 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Placeholder: Team */}
-      <section className="border-t border-border bg-surface-1 px-4 py-20 sm:px-6 lg:px-8">
+      {/* Our Team */}
+      <section className="border-t border-border bg-surface-0 px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <ScrollReveal>
-            <h2 className="mb-4 text-3xl font-bold text-text-primary">Our Team</h2>
-            <p className="mb-10 text-sm text-text-secondary">
-              Meet the people who make C.O.D.E. happen.
-            </p>
+            <div className="mb-10 text-center sm:text-left">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.3em] text-accent">
+                The Community
+              </p>
+              <h2 className="mb-4 text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
+                Our Team
+              </h2>
+              <p className="max-w-2xl text-sm leading-relaxed text-text-secondary">
+                Meet the minds behind C.O.D.E. 2026&ndash;27 &mdash; leading initiatives,
+                designing technical workshops, and building community.
+              </p>
+            </div>
           </ScrollReveal>
-          {/* PLACEHOLDER: Replace with actual team member data */}
-          <div className="rounded-lg border border-dashed border-border p-12 text-center">
-            <p className="text-sm text-text-tertiary">
-              [Team member profiles will appear here. Add team data to display this section.]
-            </p>
-          </div>
+          <TeamSection />
         </div>
       </section>
     </PageWrapper>

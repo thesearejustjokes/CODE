@@ -39,6 +39,7 @@ export function EventCard({ event }: EventCardProps) {
             alt={`${event.title} banner`}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
+            unoptimized
           />
         ) : (
           <div className="flex h-full items-center justify-center">

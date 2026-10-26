@@ -1,6 +1,7 @@
 import { getFeaturedEvent, getUpcomingEvents } from '@/lib/supabase/public'
 import { FeaturedEvent } from '@/components/home/FeaturedEvent'
 import { HeroFallback } from '@/components/home/HeroFallback'
+import { ArcadeCAdvert } from '@/components/events/ArcadeCAdvert'
 import { EventCard } from '@/components/events/EventCard'
 import { ScrollReveal } from '@/components/animations/ScrollReveal'
 import { BubbleField } from '@/components/animations/BubbleField'
@@ -16,7 +17,7 @@ export default async function HomePage() {
   ])
 
   // Filter out the featured event from the upcoming grid
-  const otherEvents = upcomingEvents.filter((e) => !e.is_featured)
+  const otherEvents = upcomingEvents.filter((e) => !e.is_featured && e.id !== featuredEvent?.id)
 
   return (
     <PageWrapper noTopPadding>
@@ -26,6 +27,9 @@ export default async function HomePage() {
       ) : (
         <HeroFallback />
       )}
+
+      {/* Flagship Event Advert & Showcase */}
+      <ArcadeCAdvert />
 
       {/* Upcoming events */}
       {otherEvents.length > 0 && (

@@ -25,23 +25,30 @@ export function getPublicClient() {
   return cachedPublicClient
 }
 
+import { ARCADE_C_EVENT, FALLBACK_EVENTS } from '@/lib/events/constants'
+
 /**
  * Fetch the single featured event for the homepage.
- * Returns null immediately if Supabase is unconfigured or if query times out.
+ * Returns ARCADE_C_EVENT if Supabase is unconfigured or if query returns null.
  */
 export async function getFeaturedEvent(): Promise<Event | null> {
   const client = getPublicClient()
-  if (!client) return null
+  if (!client) return ARCADE_C_EVENT
 
-  const query = client
-    .from('events')
-    .select('*')
-    .eq('is_featured', true)
-    .eq('published', true)
-    .single()
-    .then(({ data, error }) => (error ? null : (data as Event)))
+  try {
+    const query = client
+      .from('events')
+      .select('*')
+      .eq('is_featured', true)
+      .eq('published', true)
+      .single()
+      .then(({ data, error }) => (error || !data ? ARCADE_C_EVENT : (data as Event)))
 
-  return withTimeout(query, null, 2500)
+    const result = await withTimeout(query, ARCADE_C_EVENT, 2500)
+    return result || ARCADE_C_EVENT
+  } catch {
+    return ARCADE_C_EVENT
+  }
 }
 
 /**
@@ -49,17 +56,25 @@ export async function getFeaturedEvent(): Promise<Event | null> {
  */
 export async function getUpcomingEvents(limit = 6): Promise<Event[]> {
   const client = getPublicClient()
-  if (!client) return []
+  if (!client) return FALLBACK_EVENTS
 
-  const query = client
-    .from('events')
-    .select('*')
-    .eq('published', true)
-    .order('starts_at', { ascending: true })
-    .limit(limit)
-    .then(({ data, error }) => (error || !data ? [] : (data as Event[])))
+  try {
+    const query = client
+      .from('events')
+      .select('*')
+      .eq('published', true)
+      .order('starts_at', { ascending: true })
+      .limit(limit)
+      .then(({ data, error }) => {
+        if (error || !data || data.length === 0) return FALLBACK_EVENTS
+        return data as Event[]
+      })
 
-  return withTimeout(query, [], 2500)
+    const result = await withTimeout(query, FALLBACK_EVENTS, 2500)
+    return result && result.length > 0 ? result : FALLBACK_EVENTS
+  } catch {
+    return FALLBACK_EVENTS
+  }
 }
 
 /**
@@ -67,36 +82,64 @@ export async function getUpcomingEvents(limit = 6): Promise<Event[]> {
  */
 export async function getAllEventsCatalog(): Promise<{ upcoming: Event[]; past: Event[] }> {
   const client = getPublicClient()
-  if (!client) return { upcoming: [], past: [] }
+  if (!client) return { upcoming: FALLBACK_EVENTS, past: [] }
 
   const now = new Date().toISOString()
 
-  const query = Promise.all([
-    client
-      .from('events')
-      .select('*')
-      .eq('published', true)
-      .or(`ends_at.is.null,ends_at.gte.${now}`)
-      .order('starts_at', { ascending: true }),
-    client
-      .from('events')
-      .select('*')
-      .eq('published', true)
-      .lt('ends_at', now)
-      .order('ends_at', { ascending: false })
-      .limit(12),
-  ]).then(([upcomingRes, pastRes]) => ({
-    upcoming: (upcomingRes.data || []) as Event[],
-    past: (pastRes.data || []) as Event[],
-  }))
+  try {
+    const query = Promise.all([
+      client
+        .from('events')
+        .select('*')
+        .eq('published', true)
+        .or(`ends_at.is.null,ends_at.gte.${now}`)
+        .order('starts_at', { ascending: true }),
+      client
+        .from('events')
+        .select('*')
+        .eq('published', true)
+        .lt('ends_at', now)
+        .order('ends_at', { ascending: false })
+        .limit(12),
+    ]).then(([upcomingRes, pastRes]) => {
+      const upcoming = (upcomingRes.data || []) as Event[]
+      const past = (pastRes.data || []) as Event[]
 
-  return withTimeout(query, { upcoming: [], past: [] }, 2500)
+      // If no upcoming events in DB, use our default active event
+      const finalUpcoming = upcoming.length > 0 ? upcoming : FALLBACK_EVENTS
+      return { upcoming: finalUpcoming, past }
+    })
+
+    return withTimeout(query, { upcoming: FALLBACK_EVENTS, past: [] }, 2500)
+  } catch {
+    return { upcoming: FALLBACK_EVENTS, past: [] }
+  }
 }
 
 /**
  * Fetch a single event by slug.
  */
 export async function getEventBySlug(slug: string): Promise<Event | null> {
+  if (slug === 'arcade-c') {
+    const client = getPublicClient()
+    if (!client) return ARCADE_C_EVENT
+
+    try {
+      const query = client
+        .from('events')
+        .select('*')
+        .eq('slug', slug)
+        .eq('published', true)
+        .single()
+        .then(({ data, error }) => (error || !data ? ARCADE_C_EVENT : (data as Event)))
+
+      const result = await withTimeout(query, ARCADE_C_EVENT, 2500)
+      return result || ARCADE_C_EVENT
+    } catch {
+      return ARCADE_C_EVENT
+    }
+  }
+
   const client = getPublicClient()
   if (!client) return null
 
