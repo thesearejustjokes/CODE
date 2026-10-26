@@ -177,6 +177,16 @@ body {
   background-clip: text;
 }
 
+/*
+ * Hero C.O.D.E. text — cursor-reactive gradient overlay.
+ * JS writes `--grad` via inline style's backgroundImage; the clip is
+ * inherited from .text-gradient-accent above.
+ * will-change promotes the element to its own compositor layer.
+ */
+.hero-code-text {
+  will-change: background-image;
+}
+
 .text-gradient-subtle {
   background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
   -webkit-background-clip: text;
