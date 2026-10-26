@@ -7,6 +7,14 @@ import { ScrollReveal } from '@/components/animations/ScrollReveal'
 import { BubbleField } from '@/components/animations/BubbleField'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 
+// ============================================================================
+// 🎛️ HOMEPAGE MODE SWITCH:
+// Set to `true`  -> Shows the Arcade.C event banner and advert showcase.
+// Set to `false` -> Instantly restores the original C.O.D.E. Club hero page.
+// All event data remains safely saved in src/lib/events/constants.ts!
+// ============================================================================
+const SHOW_EVENT_ON_HOMEPAGE = false
+
 // Revalidate homepage every 60 seconds
 export const revalidate = 60
 
@@ -16,20 +24,25 @@ export default async function HomePage() {
     getUpcomingEvents(),
   ])
 
-  // Filter out the featured event from the upcoming grid
-  const otherEvents = upcomingEvents.filter((e) => !e.is_featured && e.id !== featuredEvent?.id)
+  // Determine whether to display the event showcase
+  const isEventMode = SHOW_EVENT_ON_HOMEPAGE && Boolean(featuredEvent)
+
+  // Filter out the featured event from upcoming list if displayed
+  const otherEvents = upcomingEvents.filter(
+    (e) => !e.is_featured && e.id !== featuredEvent?.id
+  )
 
   return (
     <PageWrapper noTopPadding>
-      {/* Hero */}
-      {featuredEvent ? (
+      {/* Hero: Shows Featured Event if toggle is true, else original C.O.D.E. Hero */}
+      {isEventMode && featuredEvent ? (
         <FeaturedEvent event={featuredEvent} />
       ) : (
         <HeroFallback />
       )}
 
-      {/* Flagship Event Advert & Showcase */}
-      <ArcadeCAdvert />
+      {/* Flagship Event Advert & Showcase (Hidden when SHOW_EVENT_ON_HOMEPAGE is false) */}
+      {isEventMode && <ArcadeCAdvert />}
 
       {/* Upcoming events */}
       {otherEvents.length > 0 && (
