@@ -13,11 +13,6 @@ export async function getAdminUser() {
   return user
 }
 
-/**
- * Checks whether the current user is an authorized administrator.
- * Throws a redirect to /admin/login if not authorized.
- * Use at the top of every server-side admin operation.
- */
 export async function requireAdmin() {
   const supabase = await createClient()
   const { data: { user }, error } = await supabase.auth.getUser()
@@ -39,6 +34,25 @@ export async function requireAdmin() {
   }
 
   return user
+}
+
+/**
+ * Verifies whether the current session belongs to an authorized admin.
+ * Returns null instead of redirecting (ideal for API Route Handlers).
+ */
+export async function verifyAdminUser() {
+  const user = await getAdminUser()
+  if (!user) return null
+
+  const serviceClient = createServiceClient()
+  const { data: adminRecord, error: adminError } = await serviceClient
+    .from('admin_users')
+    .select('id, user_id, email')
+    .eq('user_id', user.id)
+    .single()
+
+  if (adminError || !adminRecord) return null
+  return { user, adminRecord }
 }
 
 /**

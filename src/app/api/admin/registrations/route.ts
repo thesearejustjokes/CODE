@@ -1,8 +1,16 @@
 import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/service'
+import { verifyAdminUser } from '@/lib/auth/admin'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET(request: Request) {
   try {
+    const admin = await verifyAdminUser()
+    if (!admin) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { searchParams } = new URL(request.url)
     const eventId = searchParams.get('eventId')
     const status = searchParams.get('status')
@@ -49,6 +57,11 @@ export async function GET(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
+    const admin = await verifyAdminUser()
+    if (!admin) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body = await request.json()
     const { teamId, action, rejectionReason } = body
 

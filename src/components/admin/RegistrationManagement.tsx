@@ -26,6 +26,10 @@ import {
   ExternalLink,
   Loader2,
   RefreshCw,
+  Copy,
+  Check,
+  FileText,
+  Image as ImageIcon,
 } from 'lucide-react'
 
 interface RegistrationManagementProps {
@@ -53,6 +57,14 @@ export function RegistrationManagement({
   const [rejectionReason, setRejectionReason] = useState('')
   const [showRejectInput, setShowRejectInput] = useState(false)
   const [processingAction, setProcessingAction] = useState(false)
+  const [copiedUtr, setCopiedUtr] = useState<string | null>(null)
+
+  const handleCopyUtr = (utr: string) => {
+    navigator.clipboard.writeText(utr)
+    setCopiedUtr(utr)
+    toast.success('UTR copied to clipboard!')
+    setTimeout(() => setCopiedUtr(null), 2000)
+  }
 
   const handleRefresh = async () => {
     setRefreshing(true)
@@ -433,33 +445,142 @@ export function RegistrationManagement({
 
               {/* Payment Receipt Review */}
               {reviewTeam.payments && reviewTeam.payments.length > 0 && (
-                <div className="rounded border border-border bg-surface-2/40 p-3 space-y-2">
+                <div className="rounded border border-border bg-surface-2/40 p-3 space-y-3">
                   <h4 className="font-semibold uppercase tracking-wider text-accent text-[10px]">
-                    Payment Submission
+                    Payment Submission &amp; Verification
                   </h4>
-                  {reviewTeam.payments.map((p, idx) => (
-                    <div key={idx} className="space-y-1">
-                      <p>
-                        <span className="text-text-secondary">UTR / Ref:</span>{' '}
-                        <span className="font-mono font-semibold text-text-primary">{p.transaction_reference || 'N/A'}</span>
-                      </p>
-                      <p>
-                        <span className="text-text-secondary">Method:</span> {p.method} &bull;{' '}
-                        <span className="text-text-secondary">Amount:</span> {formatCurrency(p.amount)}
-                      </p>
-                      <p>
-                        <span className="text-text-secondary">Receipt File:</span>{' '}
-                        <span className="font-mono text-text-tertiary">{p.receipt_path || 'None uploaded'}</span>
-                      </p>
-                    </div>
-                  ))}
+                  {reviewTeam.payments.map((p, idx) => {
+                    const isImage = p.receipt_path && /\.(png|jpe?g|webp)$/i.test(p.receipt_path)
+                    const isPdf = p.receipt_path && /\.pdf$/i.test(p.receipt_path)
+                    const isPendingBucket = p.receipt_path && p.receipt_path.startsWith('storage_pending/')
+                    const receiptUrl = p.receipt_path
+                      ? `/api/admin/receipts?path=${encodeURIComponent(p.receipt_path)}`
+                      : null
+
+                    return (
+                      <div key={idx} className="space-y-2 border-t border-border/60 pt-2 first:border-0 first:pt-0">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-text-secondary">UTR / Ref:</span>{' '}
+                            <span className="font-mono font-bold text-text-primary text-xs bg-surface-1 px-1.5 py-0.5 rounded border border-border">
+                              {p.transaction_reference || 'N/A'}
+                            </span>
+                            {p.transaction_reference && (
+                              <button
+                                type="button"
+                                onClick={() => handleCopyUtr(p.transaction_reference!)}
+                                className="text-text-tertiary hover:text-accent p-0.5 transition-colors"
+                                title="Copy UTR to clipboard"
+                              >
+                                {copiedUtr === p.transaction_reference ? (
+                                  <Check className="h-3.5 w-3.5 text-status-confirmed" />
+                                ) : (
+                                  <Copy className="h-3.5 w-3.5" />
+                                )}
+                              </button>
+                            )}
+                          </div>
+                          <span className="text-[11px] capitalize text-text-secondary">
+                            {p.method.replace('_', ' ')} &bull;{' '}
+                            <strong className="text-text-primary">{formatCurrency(p.amount)}</strong>
+                          </span>
+                        </div>
+
+                        {/* Receipt display */}
+                        {receiptUrl && !isPendingBucket && (
+                          <div className="space-y-2 pt-1">
+                            <div className="flex items-center justify-between">
+                              <span className="text-text-secondary text-[11px] font-medium flex items-center gap-1.5">
+                                {isImage ? (
+                                  <ImageIcon className="h-3.5 w-3.5 text-accent" />
+                                ) : (
+                                  <FileText className="h-3.5 w-3.5 text-accent" />
+                                )}
+                                Proof of Payment:
+                              </span>
+                              <a
+                                href={receiptUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-[11px] text-accent hover:underline font-semibold"
+                              >
+                                <ExternalLink className="h-3 w-3" /> Open in New Tab
+                              </a>
+                            </div>
+
+                            {isImage && (
+                              <div className="relative overflow-hidden rounded-md border border-border bg-black/40 p-2 flex items-center justify-center">
+                                <img
+                                  src={receiptUrl}
+                                  alt="Payment Proof Screenshot"
+                                  className="max-h-72 w-auto max-w-full rounded object-contain shadow-sm"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLElement
+                                    target.style.display = 'none'
+                                  }}
+                                />
+                              </div>
+                            )}
+
+                            {isPdf && (
+                              <div className="rounded border border-border bg-surface-2 p-2.5 flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <FileText className="h-4 w-4 text-accent" />
+                                  <span className="text-xs text-text-primary font-medium">
+                                    PDF Document Attached
+                                  </span>
+                                </div>
+                                <a
+                                  href={receiptUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-xs text-accent hover:underline font-medium"
+                                >
+                                  <ExternalLink className="h-3.5 w-3.5" /> View PDF
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {isPendingBucket && (
+                          <p className="rounded bg-status-review/10 border border-status-review/30 p-2 text-[11px] text-status-review">
+                            Note: Receipt proof was uploaded prior to storage bucket creation. Verify transfer using the UTR number above.
+                          </p>
+                        )}
+
+                        {!p.receipt_path && (
+                          <p className="text-[11px] text-text-tertiary italic">No receipt file uploaded.</p>
+                        )}
+                      </div>
+                    )
+                  })}
                 </div>
               )}
 
               {/* Rejection input */}
               {showRejectInput && (
-                <div className="space-y-1.5 pt-2">
-                  <label className="text-text-secondary font-medium">Rejection Reason</label>
+                <div className="space-y-2 pt-2 border-t border-border">
+                  <div className="flex items-center justify-between">
+                    <label className="text-text-secondary font-medium">Rejection Reason</label>
+                    <span className="text-[10px] text-text-tertiary">Select a preset or type below:</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      'UTR not found in bank statement',
+                      'Incorrect fee amount transferred',
+                      'Receipt screenshot is unreadable / blurry',
+                    ].map((preset) => (
+                      <button
+                        key={preset}
+                        type="button"
+                        onClick={() => setRejectionReason(preset)}
+                        className="rounded border border-border bg-surface-2 px-2 py-0.5 text-[10px] text-text-secondary hover:border-accent hover:text-text-primary transition-colors"
+                      >
+                        {preset}
+                      </button>
+                    ))}
+                  </div>
                   <Input
                     placeholder="e.g. UTR not found on statement or amount mismatch"
                     value={rejectionReason}
