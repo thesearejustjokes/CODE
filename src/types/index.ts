@@ -18,6 +18,10 @@ export interface Event {
   title: string
   slug: string
   description: string | null
+  round1: string | null
+  round2: string | null
+  round3: string | null
+  decidingW: string | null
   short_description: string | null
   banner_image_url: string | null
   venue: string | null

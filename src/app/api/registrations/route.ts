@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/service'
 import { registrationSchema } from '@/lib/validation/registration'
 import { isDeadlinePassed } from '@/lib/utils'
+import { ARCADE_C_EVENT, getArcadeCInsertPayload } from '@/lib/events/constants'
 import crypto from 'crypto'
 
 export async function POST(request: Request) {
@@ -25,14 +26,27 @@ export async function POST(request: Request) {
 
     // 2. Fetch event to verify registration eligibility
     const supabase = createServiceClient()
-    const { data: event, error: eventError } = await supabase
+    let { data: event, error: eventError } = await supabase
       .from('events')
       .select('*')
       .eq('slug', eventSlug)
       .eq('published', true)
-      .single()
+      .maybeSingle()
 
-    if (eventError || !event) {
+    // If Arcade.C details exist in constants but not yet in the DB table, auto-insert all its rich details
+    if (!event && eventSlug === ARCADE_C_EVENT.slug) {
+      const { data: insertedEvent } = await supabase
+        .from('events')
+        .insert(getArcadeCInsertPayload())
+        .select()
+        .single()
+
+      if (insertedEvent) {
+        event = insertedEvent
+      }
+    }
+
+    if (!event) {
       return NextResponse.json(
         { success: false, error: 'Event not found or not published' },
         { status: 404 }

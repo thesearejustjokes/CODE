@@ -30,22 +30,25 @@ export const ARCADE_C_EVENT: Event = {
     'A three-round technical arena combining C programming syntax surgery, generative AI reverse prompt engineering, and a collaborative code auction.',
   description: `Organized by C.O.D.E. (Community of Data Engineers), Department of CSE (Data Science) at RNS Institute of Technology, Bengaluru.
 
-Arcade.C is a premier three-round technical showdown designed exclusively for 1st-year and 2nd-year engineering students. Test your debugging reflexes, master prompt engineering with Bing Image Creator, and strategize in a real-time collaborative coding auction!
+Arcade.C is a premier three-round technical showdown designed exclusively for 1st-year and 2nd-year engineering students. Test your debugging reflexes, master prompt engineering with Bing Image Creator, and strategize in a real-time collaborative coding auction!`,
 
-ROUND 1 — SYNTAX SURGERY (100 Points)
-Each team receives two broken C code snippets—one easy and one medium—and must identify the errors and write corrected code.
+  round1:
+    `Each team receives two broken C code snippets—one easy and one medium—and must identify the errors and write corrected code.
 • Format: Paper-based pen-and-paper. AI tools are strictly prohibited.
 • Duration: 45–60 minutes.
-• Scoring: 50 marks per question. Correctness determines the score, with partial marks for partially correct answers. Submission time is used as a tie-breaker.
+• Scoring: 50 marks per question. Correctness determines the score, with partial marks for partially correct answers. Submission time is used as a tie-breaker.`,
 
-ROUND 2 — PROMPT PIXEL / REVERSE PROMPT IMAGING (100 Points)
-Teams briefly view reference images on screen and craft their own prompts in Bing Image Creator to generate images resembling the references.
+  round2:
+
+    // ROUND 2 — PROMPT PIXEL / REVERSE PROMPT IMAGING (100 Points)
+    `Teams briefly view reference images on screen and craft their own prompts in Bing Image Creator to generate images resembling the references.
 • Sub-round 1 (10 mins, 25 pts): 1 reference image → 1 generated image.
 • Sub-round 2 (15 mins, 30 pts): 2 reference images → 2 separate generated images.
 • Sub-round 3 (20 mins, 45 pts): 3 reference images → 3 separate generated images.
-• Scoring: Evaluated on visual similarity, detail precision, and composition.
+• Scoring: Evaluated on visual similarity, detail precision, and composition.`,
 
-ROUND 3 — BID & WIN / CODE AUCTION (200 Points)
+  // ROUND 3 — BID & WIN / CODE AUCTION (200 Points)
+  round3: `
 The lab is divided into three lanes, forming three mega-teams from participating teams. Three questions are drawn at random from a pool of six easy-to-medium questions and auctioned using 1,000-point allocations.
 • Format: A new question round begins every 30 minutes, even if the previous question remains unsolved.
 • Hints & Penalties:
@@ -55,10 +58,11 @@ The lab is divided into three lanes, forming three mega-teams from participating
   - 4th hint: -10 points
   - 5th hint: -20 points (reveals full logic)
 • Redistribution: Points earned by a mega-team are redistributed equally among all teams in its lane.
-• Duration: 1–1.5 hours.
+• Duration: 1–1.5 hours.`,
 
-DECIDING THE WINNER:
-Scores from all three rounds will be tallied. The top-scoring team wins the grand cash prize. In case of a tie, Round 1 submission time will serve as the tie-breaker. All participants receive official certificates.`,
+  decidingW:
+    // DECIDING THE WINNER:
+    `Scores from all three rounds will be tallied. The top-scoring team wins the grand cash prize. In case of a tie, Round 1 submission time will serve as the tie-breaker. All participants receive official certificates.`,
   banner_image_url: '/images/events/arcade-c-banner.png',
   venue: 'Data Science Dept Labs, RNSIT Campus, Bengaluru',
   starts_at: '2026-10-30T09:30:00+05:30',
@@ -109,3 +113,8 @@ A: Basic C programming knowledge is sufficient for Round 1! Round 2 tests creati
 }
 
 export const FALLBACK_EVENTS: Event[] = [ARCADE_C_EVENT]
+
+export function getArcadeCInsertPayload() {
+  const { id, created_at, updated_at, ...rest } = ARCADE_C_EVENT
+  return rest
+}

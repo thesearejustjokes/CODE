@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/service'
 import { createEventSchema } from '@/lib/validation/event'
+import { verifyAdminUser } from '@/lib/auth/admin'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
@@ -14,7 +17,7 @@ export async function GET() {
       return NextResponse.json({ success: false, error: error.message }, { status: 500 })
     }
 
-    return NextResponse.json({ success: true, data: events })
+    return NextResponse.json({ success: true, data: events || [] })
   } catch (err: unknown) {
     console.error(err)
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 })
