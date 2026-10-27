@@ -35,13 +35,16 @@ export async function POST(request: Request) {
 
     // If Arcade.C details exist in constants but not yet in the DB table, auto-insert all its rich details
     if (!event && eventSlug === ARCADE_C_EVENT.slug) {
-      const { data: insertedEvent } = await supabase
+      const payload = getArcadeCInsertPayload()
+      const { data: insertedEvent, error: insertErr } = await supabase
         .from('events')
-        .insert(getArcadeCInsertPayload())
+        .insert(payload)
         .select()
         .single()
 
-      if (insertedEvent) {
+      if (insertErr) {
+        console.error('Failed to auto-seed Arcade.C event:', insertErr)
+      } else if (insertedEvent) {
         event = insertedEvent
       }
     }

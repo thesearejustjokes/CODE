@@ -115,6 +115,15 @@ A: Basic C programming knowledge is sufficient for Round 1! Round 2 tests creati
 export const FALLBACK_EVENTS: Event[] = [ARCADE_C_EVENT]
 
 export function getArcadeCInsertPayload() {
-  const { id, created_at, updated_at, ...rest } = ARCADE_C_EVENT
-  return rest
+  const { id, created_at, updated_at, round1, round2, round3, decidingW, ...rest } = ARCADE_C_EVENT
+  return {
+    ...rest,
+    description: [
+      ARCADE_C_EVENT.description,
+      round1 ? `\n\n### Round 1 — Syntax Surgery\n${round1}` : '',
+      round2 ? `\n\n### Round 2 — Prompt Pixel\n${round2}` : '',
+      round3 ? `\n\n### Round 3 — Bid & Win / Code Auction\n${round3}` : '',
+      decidingW ? `\n\n### Deciding the Winner\n${decidingW}` : '',
+    ].filter(Boolean).join(''),
+  }
 }
