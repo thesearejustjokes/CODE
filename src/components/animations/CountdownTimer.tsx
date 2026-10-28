@@ -43,18 +43,27 @@ const SEPARATOR = (
 
 export function CountdownTimer({ targetDate, label, onExpired }: CountdownTimerProps) {
   const target = new Date(targetDate)
-  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(() => getTimeLeft(target))
+  // Initialize to null so the server and client render the same empty state,
+  // preventing the React hydration mismatch caused by the seconds ticking between
+  // SSR and client hydration.
+  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    if (!timeLeft) return
-    const id = setInterval(() => {
+    setMounted(true)
+    const tick = () => {
       const next = getTimeLeft(target)
       setTimeLeft(next)
       if (!next) onExpired?.()
-    }, 1000)
+    }
+    tick() // set immediately on mount
+    const id = setInterval(tick, 1000)
     return () => clearInterval(id)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetDate])
+
+  // Don't render anything until mounted on client — avoids hydration mismatch
+  if (!mounted) return null
 
   if (!timeLeft) {
     return (
