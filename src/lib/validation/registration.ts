@@ -7,7 +7,7 @@ const teamMemberSchema = z.object({
     .max(100, 'Full name must be at most 100 characters'),
   email: z.string().email('Please enter a valid email address'),
   college: z.string().max(200).optional(),
-  rollNumber: z.string().max(50).optional(),
+  rollNumber: z.string().min(1, 'USN is required').max(50),
 })
 
 export const registrationSchema = z.object({

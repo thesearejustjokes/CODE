@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Team, Event } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Dialog,
@@ -30,6 +31,9 @@ import {
   Check,
   FileText,
   Image as ImageIcon,
+  Pencil,
+  Trash2,
+  AlertTriangle,
 } from 'lucide-react'
 
 interface RegistrationManagementProps {
@@ -59,11 +63,114 @@ export function RegistrationManagement({
   const [processingAction, setProcessingAction] = useState(false)
   const [copiedUtr, setCopiedUtr] = useState<string | null>(null)
 
+  // Edit modal state
+  const [editingTeam, setEditingTeam] = useState<Team | null>(null)
+  const [editTeamName, setEditTeamName] = useState('')
+  const [editStatus, setEditStatus] = useState('')
+  const [editLeaderName, setEditLeaderName] = useState('')
+  const [editLeaderEmail, setEditLeaderEmail] = useState('')
+  const [editLeaderPhone, setEditLeaderPhone] = useState('')
+  const [editMembers, setEditMembers] = useState<
+    Array<{ id: string; full_name: string; email: string; college: string; roll_number: string }>
+  >([])
+  const [savingEdit, setSavingEdit] = useState(false)
+
+  // Delete modal state
+  const [deletingTeam, setDeletingTeam] = useState<Team | null>(null)
+  const [deletingInProgress, setDeletingInProgress] = useState(false)
+
   const handleCopyUtr = (utr: string) => {
     navigator.clipboard.writeText(utr)
     setCopiedUtr(utr)
     toast.success('UTR copied to clipboard!')
     setTimeout(() => setCopiedUtr(null), 2000)
+  }
+
+  const openEditModal = (team: Team) => {
+    setEditingTeam(team)
+    setEditTeamName(team.team_name)
+    setEditStatus(team.registration_status)
+    setEditLeaderName(team.leader_name)
+    setEditLeaderEmail(team.leader_email)
+    setEditLeaderPhone(team.leader_phone)
+    setEditMembers(
+      (team.team_members || []).map((m) => ({
+        id: m.id,
+        full_name: m.full_name || '',
+        email: m.email || '',
+        college: m.college || '',
+        roll_number: m.roll_number || '', // USN
+      }))
+    )
+  }
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingTeam) return
+    setSavingEdit(true)
+
+    try {
+      const res = await fetch('/api/admin/registrations', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          teamId: editingTeam.id,
+          action: 'update',
+          teamName: editTeamName,
+          leaderName: editLeaderName,
+          leaderEmail: editLeaderEmail,
+          leaderPhone: editLeaderPhone,
+          registrationStatus: editStatus,
+          members: editMembers,
+        }),
+      })
+
+      const data = await res.json()
+      if (!res.ok || !data.success) {
+        toast.error(data.error || 'Failed to update team details')
+        return
+      }
+
+      toast.success('Team details updated successfully!')
+      setEditingTeam(null)
+      handleRefresh()
+      router.refresh()
+    } catch (err) {
+      console.error(err)
+      toast.error('Network error updating team details')
+    } finally {
+      setSavingEdit(false)
+    }
+  }
+
+  const handleDeleteTeam = async () => {
+    if (!deletingTeam) return
+    setDeletingInProgress(true)
+
+    try {
+      const res = await fetch(`/api/admin/registrations?teamId=${deletingTeam.id}`, {
+        method: 'DELETE',
+      })
+
+      const data = await res.json()
+      if (!res.ok || !data.success) {
+        toast.error(data.error || 'Failed to delete team')
+        return
+      }
+
+      toast.success(`Registration for ${deletingTeam.team_name} permanently removed`)
+      setTeams((prev) => prev.filter((t) => t.id !== deletingTeam.id))
+      setDeletingTeam(null)
+      if (reviewTeam?.id === deletingTeam.id) {
+        setReviewTeam(null)
+      }
+      router.refresh()
+    } catch (err) {
+      console.error(err)
+      toast.error('Network error deleting registration')
+    } finally {
+      setDeletingInProgress(false)
+    }
   }
 
   const handleRefresh = async () => {
@@ -378,6 +485,26 @@ export function RegistrationManagement({
                               </Button>
                             )}
 
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => openEditModal(team)}
+                              className="h-7 w-7 p-0 border-border text-text-tertiary hover:text-accent hover:border-accent"
+                              title="Edit Team, Members & USN"
+                            >
+                              <Pencil className="h-3 w-3" />
+                            </Button>
+
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setDeletingTeam(team)}
+                              className="h-7 w-7 p-0 border-border text-text-tertiary hover:text-status-rejected hover:border-status-rejected/40 hover:bg-status-rejected/10"
+                              title="Delete Team / Fraudulent Attempt"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+
                             <a
                               href={`/registration/${team.public_reference}`}
                               target="_blank"
@@ -429,14 +556,41 @@ export function RegistrationManagement({
               {/* Members */}
               {reviewTeam.team_members && reviewTeam.team_members.length > 0 && (
                 <div>
-                  <h4 className="font-semibold uppercase tracking-wider text-text-tertiary text-[10px] mb-1.5">
-                    Roster ({reviewTeam.team_members.length} members)
-                  </h4>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <h4 className="font-semibold uppercase tracking-wider text-text-tertiary text-[10px]">
+                      Roster ({reviewTeam.team_members.length} members)
+                    </h4>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const t = reviewTeam
+                        setReviewTeam(null)
+                        openEditModal(t)
+                      }}
+                      className="text-[11px] text-accent hover:underline flex items-center gap-1 font-medium"
+                    >
+                      <Pencil className="h-3 w-3" /> Edit USN &amp; Info
+                    </button>
+                  </div>
                   <div className="rounded border border-border divide-y divide-border">
                     {reviewTeam.team_members.map((m, idx) => (
-                      <div key={idx} className="p-2 flex justify-between">
-                        <span className="font-medium text-text-primary">{m.full_name}</span>
-                        <span className="text-text-secondary font-mono">{m.email}</span>
+                      <div key={idx} className="p-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5">
+                        <div>
+                          <span className="font-medium text-text-primary text-xs">{m.full_name}</span>
+                          {m.college && (
+                            <span className="text-[11px] text-text-tertiary ml-2">({m.college})</span>
+                          )}
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          {m.roll_number ? (
+                            <span className="font-mono text-[11px] text-accent bg-surface-1 px-1.5 py-0.5 rounded border border-border font-medium">
+                              USN: {m.roll_number}
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-text-tertiary italic">No USN</span>
+                          )}
+                          <span className="text-text-secondary font-mono text-xs">{m.email}</span>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -592,16 +746,42 @@ export function RegistrationManagement({
             </div>
           )}
 
-          <DialogFooter className="flex justify-between gap-2 border-t border-border pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setReviewTeam(null)}
-              className="border-border text-xs"
-            >
-              Close
-            </Button>
+          <DialogFooter className="flex flex-wrap justify-between gap-2 border-t border-border pt-4">
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setReviewTeam(null)}
+                className="border-border text-xs"
+              >
+                Close
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  if (reviewTeam) {
+                    const t = reviewTeam
+                    setReviewTeam(null)
+                    openEditModal(t)
+                  }
+                }}
+                className="border-border text-xs"
+              >
+                <Pencil className="mr-1 h-3.5 w-3.5 text-accent" /> Edit Info
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setDeletingTeam(reviewTeam)}
+                className="border-status-rejected/40 text-status-rejected text-xs hover:bg-status-rejected/10"
+              >
+                <Trash2 className="mr-1 h-3.5 w-3.5" /> Delete Attempt
+              </Button>
+            </div>
 
             <div className="flex gap-2">
               {!showRejectInput ? (
@@ -639,6 +819,256 @@ export function RegistrationManagement({
                 Approve Payment
               </Button>
             </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Team & Members Dialog */}
+      <Dialog open={!!editingTeam} onOpenChange={(open) => !open && setEditingTeam(null)}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto border-border bg-surface-1 sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-lg text-text-primary flex items-center gap-2">
+              <Pencil className="h-4 w-4 text-accent" /> Edit Team — {editingTeam?.team_number}
+            </DialogTitle>
+          </DialogHeader>
+
+          {editingTeam && (
+            <form onSubmit={handleSaveEdit} className="space-y-4 py-2 text-xs">
+              {/* Primary Team Details */}
+              <div className="rounded-lg border border-border bg-surface-2/40 p-4 space-y-3">
+                <h4 className="font-semibold uppercase tracking-wider text-accent text-[11px]">
+                  Team Information
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs text-text-secondary">Team Name</Label>
+                    <Input
+                      value={editTeamName}
+                      onChange={(e) => setEditTeamName(e.target.value)}
+                      required
+                      className="border-border bg-surface-2 text-xs"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label className="text-xs text-text-secondary">Registration Status</Label>
+                    <select
+                      value={editStatus}
+                      onChange={(e) => setEditStatus(e.target.value)}
+                      className="h-9 w-full rounded-md border border-border bg-surface-2 px-3 py-1 text-xs text-text-primary focus:outline-none focus:ring-1 focus:ring-accent"
+                    >
+                      <option value="confirmed">Confirmed</option>
+                      <option value="payment_review">Awaiting Payment Review</option>
+                      <option value="pending_payment">Pending Payment</option>
+                      <option value="rejected">Rejected</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                  <div className="space-y-1">
+                    <Label className="text-xs text-text-secondary">Leader Name</Label>
+                    <Input
+                      value={editLeaderName}
+                      onChange={(e) => setEditLeaderName(e.target.value)}
+                      required
+                      className="border-border bg-surface-2 text-xs"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-text-secondary">Leader Email</Label>
+                    <Input
+                      type="email"
+                      value={editLeaderEmail}
+                      onChange={(e) => setEditLeaderEmail(e.target.value)}
+                      required
+                      className="border-border bg-surface-2 text-xs font-mono"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-text-secondary">Leader Phone</Label>
+                    <Input
+                      value={editLeaderPhone}
+                      onChange={(e) => setEditLeaderPhone(e.target.value)}
+                      className="border-border bg-surface-2 text-xs font-mono"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Roster & USN / Roll Numbers */}
+              <div className="rounded-lg border border-border bg-surface-2/40 p-4 space-y-3">
+                <h4 className="font-semibold uppercase tracking-wider text-accent text-[11px]">
+                  Team Members &amp; USN ({editMembers.length})
+                </h4>
+
+                <div className="space-y-3">
+                  {editMembers.map((m, idx) => (
+                    <div
+                      key={m.id || idx}
+                      className="rounded border border-border bg-surface-1/60 p-3 space-y-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-text-primary text-[11px]">
+                          Member #{idx + 1} {idx === 0 ? '(Leader)' : ''}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                          <Label className="text-[10px] text-text-tertiary">Full Name</Label>
+                          <Input
+                            value={m.full_name}
+                            onChange={(e) => {
+                              const updated = [...editMembers]
+                              updated[idx].full_name = e.target.value
+                              setEditMembers(updated)
+                            }}
+                            required
+                            className="h-8 border-border bg-surface-2 text-xs"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <Label className="text-[10px] text-text-tertiary">Email Address</Label>
+                          <Input
+                            type="email"
+                            value={m.email}
+                            onChange={(e) => {
+                              const updated = [...editMembers]
+                              updated[idx].email = e.target.value
+                              setEditMembers(updated)
+                            }}
+                            required
+                            className="h-8 border-border bg-surface-2 text-xs font-mono"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                          <Label className="text-[10px] text-accent font-semibold">
+                            USN / University Seat No.
+                          </Label>
+                          <Input
+                            placeholder="e.g. 1RN23CS001"
+                            value={m.roll_number}
+                            onChange={(e) => {
+                              const updated = [...editMembers]
+                              updated[idx].roll_number = e.target.value
+                              setEditMembers(updated)
+                            }}
+                            className="h-8 border-border bg-surface-2 font-mono text-xs uppercase"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <Label className="text-[10px] text-text-tertiary">College / Department</Label>
+                          <Input
+                            placeholder="e.g. RNSIT"
+                            value={m.college}
+                            onChange={(e) => {
+                              const updated = [...editMembers]
+                              updated[idx].college = e.target.value
+                              setEditMembers(updated)
+                            }}
+                            className="h-8 border-border bg-surface-2 text-xs"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <DialogFooter className="flex justify-between gap-2 border-t border-border pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEditingTeam(null)}
+                  className="border-border text-xs"
+                >
+                  Cancel
+                </Button>
+
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={savingEdit}
+                  className="bg-accent text-surface-0 hover:bg-accent-dim text-xs font-medium"
+                >
+                  {savingEdit ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
+                  Save Team Changes
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete / Fraudulent Removal Confirmation Dialog */}
+      <Dialog open={!!deletingTeam} onOpenChange={(open) => !open && setDeletingTeam(null)}>
+        <DialogContent className="border-border bg-surface-1 sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base text-status-rejected flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-status-rejected shrink-0" /> Confirm Permanent Removal
+            </DialogTitle>
+          </DialogHeader>
+
+          {deletingTeam && (
+            <div className="space-y-3 py-2 text-xs text-text-secondary">
+              <p>
+                Are you sure you want to permanently delete registration for:
+              </p>
+              <div className="rounded border border-border bg-surface-2 p-3 space-y-1">
+                <p className="font-semibold text-text-primary text-sm">
+                  {deletingTeam.team_name}
+                </p>
+                <p className="font-mono text-accent text-xs">
+                  {deletingTeam.team_number}
+                </p>
+                <p className="text-text-tertiary text-[11px]">
+                  Leader: {deletingTeam.leader_name} ({deletingTeam.leader_email})
+                </p>
+              </div>
+              <p className="text-status-rejected font-medium">
+                This will delete the team, its members roster, and all associated payment receipts from Supabase storage. Use this to permanently eliminate fraudulent submissions or uncompleted pending registrations.
+              </p>
+            </div>
+          )}
+
+          <DialogFooter className="flex justify-between gap-2 border-t border-border pt-3">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={deletingInProgress}
+              onClick={() => setDeletingTeam(null)}
+              className="border-border text-xs"
+            >
+              Cancel
+            </Button>
+
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              disabled={deletingInProgress}
+              onClick={handleDeleteTeam}
+              className="text-xs font-medium"
+            >
+              {deletingInProgress ? (
+                <>
+                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="mr-1.5 h-3.5 w-3.5" /> Delete Permanently
+                </>
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

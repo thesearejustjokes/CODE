@@ -42,7 +42,14 @@ export async function getFeaturedEvent(): Promise<Event | null> {
       .eq('is_featured', true)
       .eq('published', true)
       .single()
-      .then(({ data, error }) => (error || !data ? ARCADE_C_EVENT : (data as Event)))
+      .then(({ data, error }) => {
+        if (error || !data) return ARCADE_C_EVENT
+        const ev = data as Event
+        if (ev.slug === ARCADE_C_EVENT.slug) {
+          return { ...ARCADE_C_EVENT, ...ev, fee_per_team: ARCADE_C_EVENT.fee_per_team }
+        }
+        return ev
+      })
 
     const result = await withTimeout(query, ARCADE_C_EVENT, 2500)
     return result || ARCADE_C_EVENT
@@ -131,7 +138,18 @@ export async function getEventBySlug(slug: string): Promise<Event | null> {
         .eq('slug', slug)
         .eq('published', true)
         .single()
-        .then(({ data, error }) => (error || !data ? ARCADE_C_EVENT : (data as Event)))
+        .then(({ data, error }) => {
+          if (error || !data) return ARCADE_C_EVENT
+          return {
+            ...ARCADE_C_EVENT,
+            ...(data as Event),
+            fee_per_team: ARCADE_C_EVENT.fee_per_team,
+            round1: ARCADE_C_EVENT.round1,
+            round2: ARCADE_C_EVENT.round2,
+            round3: ARCADE_C_EVENT.round3,
+            decidingW: ARCADE_C_EVENT.decidingW,
+          } as Event
+        })
 
       const result = await withTimeout(query, ARCADE_C_EVENT, 2500)
       return result || ARCADE_C_EVENT

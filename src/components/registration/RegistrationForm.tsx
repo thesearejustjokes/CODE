@@ -94,6 +94,10 @@ export function RegistrationForm({ event }: RegistrationFormProps) {
         toast.error(`Member #${i + 2}: Valid email address is required`)
         return false
       }
+      if (!m.rollNumber.trim()) {
+        toast.error(`Member #${i + 2}: USN is required`)
+        return false
+      }
     }
     return true
   }
@@ -368,13 +372,14 @@ export function RegistrationForm({ event }: RegistrationFormProps) {
                     </Button>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                     <div className="space-y-1">
                       <Label className="text-xs text-text-secondary">Full Name *</Label>
                       <Input
                         placeholder="Full Name"
                         value={member.fullName}
                         onChange={(e) => updateMember(idx, 'fullName', e.target.value)}
+                        required
                         className="h-9 border-border bg-surface-2 text-sm"
                       />
                     </div>
@@ -385,25 +390,18 @@ export function RegistrationForm({ event }: RegistrationFormProps) {
                         placeholder="Email"
                         value={member.email}
                         onChange={(e) => updateMember(idx, 'email', e.target.value)}
+                        required
                         className="h-9 border-border bg-surface-2 text-sm"
                       />
                     </div>
                     <div className="space-y-1">
-                      <Label className="text-xs text-text-secondary">College (Optional)</Label>
+                      <Label className="text-xs text-text-secondary">USN *</Label>
                       <Input
-                        placeholder="College"
-                        value={member.college}
-                        onChange={(e) => updateMember(idx, 'college', e.target.value)}
-                        className="h-9 border-border bg-surface-2 text-sm"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs text-text-secondary">USN / Roll No (Optional)</Label>
-                      <Input
-                        placeholder="Roll No"
+                        placeholder="e.g. 1RN23CS001"
                         value={member.rollNumber}
                         onChange={(e) => updateMember(idx, 'rollNumber', e.target.value)}
-                        className="h-9 border-border bg-surface-2 text-sm"
+                        required
+                        className="h-9 border-border bg-surface-2 font-mono text-sm uppercase"
                       />
                     </div>
                   </div>
@@ -477,7 +475,7 @@ export function RegistrationForm({ event }: RegistrationFormProps) {
                     {members.map((m, idx) => (
                       <li key={idx}>
                         • {m.fullName} ({m.email})
-                        {m.college ? ` — ${m.college}` : ''}
+                        {m.rollNumber ? ` — USN: ${m.rollNumber}` : ''}
                       </li>
                     ))}
                   </ul>

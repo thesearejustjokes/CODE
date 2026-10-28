@@ -123,7 +123,7 @@ export function ArcadeCAdvert() {
               <div className="rounded-lg border border-border bg-surface-2 p-3 text-center">
                 <IndianRupee className="mx-auto mb-1 h-4 w-4 text-accent" />
                 <span className="block text-[10px] uppercase tracking-wider text-text-tertiary font-mono">Entry Fee</span>
-                <span className="text-xs font-bold text-text-primary">&#8377;200 / Team</span>
+                <span className="text-xs font-bold text-text-primary">&#8377;180 / Team</span>
               </div>
             </div>
 

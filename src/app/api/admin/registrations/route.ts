@@ -63,16 +63,75 @@ export async function PATCH(request: Request) {
     }
 
     const body = await request.json()
-    const { teamId, action, rejectionReason } = body
+    const { teamId, action, rejectionReason, teamName, leaderName, leaderEmail, leaderPhone, registrationStatus, members } = body
 
-    if (!teamId || !action || !['approve', 'reject'].includes(action)) {
+    if (!teamId || !action || !['approve', 'reject', 'update'].includes(action)) {
       return NextResponse.json(
-        { success: false, error: 'teamId and valid action (approve/reject) are required' },
+        { success: false, error: 'teamId and valid action (approve/reject/update) are required' },
         { status: 400 }
       )
     }
 
     const supabase = createServiceClient()
+
+    // Handle team and member details update
+    if (action === 'update') {
+      if (!teamName || !leaderName || !leaderEmail) {
+        return NextResponse.json(
+          { success: false, error: 'Team name, leader name, and leader email are required.' },
+          { status: 400 }
+        )
+      }
+
+      // 1. Update team record
+      const updateData: Record<string, any> = {
+        team_name: teamName.trim(),
+        leader_name: leaderName.trim(),
+        leader_email: leaderEmail.trim().toLowerCase(),
+        leader_phone: leaderPhone ? leaderPhone.trim() : '',
+      }
+
+      if (registrationStatus) {
+        updateData.registration_status = registrationStatus
+      }
+
+      const { error: teamUpdateError } = await supabase
+        .from('teams')
+        .update(updateData)
+        .eq('id', teamId)
+
+      if (teamUpdateError) {
+        return NextResponse.json({ success: false, error: teamUpdateError.message }, { status: 500 })
+      }
+
+      // 2. Update team members (including USN / roll_number)
+      if (Array.isArray(members)) {
+        for (const m of members) {
+          if (m.id) {
+            await supabase
+              .from('team_members')
+              .update({
+                full_name: m.full_name?.trim() || m.fullName?.trim() || '',
+                email: (m.email || '').trim().toLowerCase(),
+                college: m.college ? m.college.trim() : null,
+                roll_number: m.roll_number ? m.roll_number.trim() : (m.rollNumber ? m.rollNumber.trim() : null),
+              })
+              .eq('id', m.id)
+              .eq('team_id', teamId)
+          }
+        }
+      }
+
+      // 3. Audit log
+      await supabase.from('audit_logs').insert({
+        action: 'team_update',
+        entity_type: 'teams',
+        entity_id: teamId,
+        metadata: { teamName, leaderEmail },
+      })
+
+      return NextResponse.json({ success: true, message: 'Team details updated successfully' })
+    }
 
     // Find the latest payment for this team
     const { data: payments, error: paymentFindError } = await supabase
@@ -151,6 +210,76 @@ export async function PATCH(request: Request) {
     }
   } catch (err: unknown) {
     console.error(err)
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 })
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const admin = await verifyAdminUser()
+    if (!admin) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const teamId = searchParams.get('teamId')
+
+    if (!teamId) {
+      return NextResponse.json({ success: false, error: 'teamId is required' }, { status: 400 })
+    }
+
+    const supabase = createServiceClient()
+
+    // 1. Fetch team details for logging and receipts
+    const { data: team, error: teamFetchError } = await supabase
+      .from('teams')
+      .select('id, team_number, team_name, payments(id, receipt_path)')
+      .eq('id', teamId)
+      .single()
+
+    if (teamFetchError || !team) {
+      return NextResponse.json({ success: false, error: 'Team not found' }, { status: 404 })
+    }
+
+    // 2. Remove receipt files from storage if present
+    const teamPayments = (team.payments || []) as Array<{ id: string; receipt_path: string | null }>
+    if (teamPayments.length > 0) {
+      const receiptPaths = teamPayments
+        .map((p) => p.receipt_path)
+        .filter((p): p is string => Boolean(p && !p.startsWith('storage_pending/')))
+
+      if (receiptPaths.length > 0) {
+        await supabase.storage.from('payment-receipts').remove(receiptPaths)
+      }
+
+      // 3. Delete payments first to satisfy ON DELETE RESTRICT foreign key
+      await supabase.from('payments').delete().eq('team_id', teamId)
+    }
+
+    // 4. Delete team members
+    await supabase.from('team_members').delete().eq('team_id', teamId)
+
+    // 5. Delete team record
+    const { error: deleteTeamError } = await supabase
+      .from('teams')
+      .delete()
+      .eq('id', teamId)
+
+    if (deleteTeamError) {
+      return NextResponse.json({ success: false, error: deleteTeamError.message }, { status: 500 })
+    }
+
+    // 6. Audit log
+    await supabase.from('audit_logs').insert({
+      action: 'team_delete',
+      entity_type: 'teams',
+      entity_id: teamId,
+      metadata: { teamNumber: team.team_number, teamName: team.team_name },
+    })
+
+    return NextResponse.json({ success: true, message: 'Team and associated records deleted permanently' })
+  } catch (err: unknown) {
+    console.error('Error deleting team registration:', err)
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 })
   }
 }

@@ -47,6 +47,10 @@ export async function POST(request: Request) {
       } else if (insertedEvent) {
         event = insertedEvent
       }
+    } else if (event && eventSlug === ARCADE_C_EVENT.slug && event.fee_per_team !== ARCADE_C_EVENT.fee_per_team) {
+      // Keep DB fee in sync with ARCADE_C_EVENT constants
+      await supabase.from('events').update({ fee_per_team: ARCADE_C_EVENT.fee_per_team }).eq('id', event.id)
+      event.fee_per_team = ARCADE_C_EVENT.fee_per_team
     }
 
     if (!event) {

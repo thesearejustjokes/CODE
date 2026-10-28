@@ -96,19 +96,19 @@ export default async function EventDetailPage({ params }: Props) {
               </Section>
             )}
 
-            {event.eligibility && (
+            {event.round1 && (
               <Section title="ROUND 1 — SYNTAX SURGERY (100 Points)">
                 <p className="whitespace-pre-line">{event.round1}</p>
               </Section>
             )}
 
-            {event.eligibility && (
+            {event.round2 && (
               <Section title="ROUND 2 — PROMPT PIXEL / REVERSE PROMPT IMAGING (100 Points)">
                 <p className="whitespace-pre-line">{event.round2}</p>
               </Section>
             )}
 
-            {event.eligibility && (
+            {event.round3 && (
               <Section title="ROUND 3 — BID & WIN / CODE AUCTION (200 Points)">
                 <p className="whitespace-pre-line">{event.round3}</p>
               </Section>
