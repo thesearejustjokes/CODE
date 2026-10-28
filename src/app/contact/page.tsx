@@ -14,8 +14,8 @@ const contactInfo = [
   {
     icon: Mail,
     label: 'Email',
-    value: 'code.club@rnsit.ac.in',
-    href: 'mailto:code.club@rnsit.ac.in',
+    value: 'codernsit8@gmail.com',
+    href: 'mailto:codernsit8@gmail.com',
   },
   {
     icon: MapPin,
@@ -27,9 +27,9 @@ const contactInfo = [
 
 // TODO: Replace # with actual social media URLs
 const socialLinks = [
-  { icon: GithubIcon, label: 'GitHub', href: '#' },
-  { icon: LinkedinIcon, label: 'LinkedIn', href: '#' },
-  { icon: InstagramIcon, label: 'Instagram', href: '#' },
+  { icon: GithubIcon, label: 'GitHub', href: 'https://github.com/codernsit8-sys' },
+  { icon: LinkedinIcon, label: 'LinkedIn', href: 'https://in.linkedin.com/company/code-data-science-club-rnsit' },
+  { icon: InstagramIcon, label: 'Instagram', href: 'https://www.instagram.com/code.rnsit' },
 ]
 
 export default function ContactPage() {

@@ -11,10 +11,10 @@ const quickLinks = [
 
 // TODO: Replace placeholder hrefs with actual club social media links
 const socialLinks = [
-  { href: '#', label: 'GitHub', icon: GithubIcon },
-  { href: '#', label: 'LinkedIn', icon: LinkedinIcon },
-  { href: '#', label: 'Instagram', icon: InstagramIcon },
-  { href: 'mailto:code.club@rnsit.ac.in', label: 'Email', icon: Mail },
+  { href: 'https://github.com/codernsit8-sys', label: 'GitHub', icon: GithubIcon },
+  { href: 'https://in.linkedin.com/company/code-data-science-club-rnsit', label: 'LinkedIn', icon: LinkedinIcon },
+  { href: 'https://www.instagram.com/code.rnsit', label: 'Instagram', icon: InstagramIcon },
+  { href: 'mailto:codernsit8@gmail.com', label: 'Email', icon: Mail },
 ]
 
 export function Footer() {

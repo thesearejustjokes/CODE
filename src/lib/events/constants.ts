@@ -98,8 +98,8 @@ A: ₹180 per team. Registration includes entry to all 3 rounds and certificates
 
 Q: Is prior competitive programming experience required?
 A: Basic C programming knowledge is sufficient for Round 1! Round 2 tests creative AI prompting, and Round 3 involves team auction strategy.`,
-  contact_email: 'code@rnsit.ac.in',
-  contact_phone: '+91 98765 43210',
+  contact_email: 'codernsit8@gmail.com',
+  contact_phone: '+91 70196 72072',
   created_at: '2026-10-13T00:00:00Z',
   updated_at: '2026-10-26T00:00:00Z',
 }
