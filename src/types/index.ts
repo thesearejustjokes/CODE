@@ -134,6 +134,7 @@ export interface RegistrationFormData {
   leaderName: string
   leaderEmail: string
   leaderPhone: string
+  leaderRollNumber?: string
   members: Array<{
     fullName: string
     email: string

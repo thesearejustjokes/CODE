@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const { eventSlug, teamName, leaderName, leaderEmail, leaderPhone, members } = parsed.data
+    const { eventSlug, teamName, leaderName, leaderEmail, leaderRollNumber, leaderPhone, members } = parsed.data
 
     // 2. Fetch event to verify registration eligibility
     const supabase = createServiceClient()
@@ -139,7 +139,7 @@ export async function POST(request: Request) {
         full_name: leaderName.trim(),
         email: leaderEmail.trim().toLowerCase(),
         college: null,
-        roll_number: null,
+        roll_number: leaderRollNumber ? leaderRollNumber.trim() : null,
       },
       ...members.map((m) => ({
         team_id: newTeam.id,

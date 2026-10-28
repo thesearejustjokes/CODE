@@ -21,6 +21,7 @@ export const registrationSchema = z.object({
     .min(2, 'Leader name must be at least 2 characters')
     .max(100),
   leaderEmail: z.string().email('Please enter a valid email address'),
+  leaderRollNumber: z.string().min(1, 'Leader USN is required').max(50),
   leaderPhone: z
     .string()
     .regex(/^[6-9]\d{9}$/, 'Please enter a valid 10-digit Indian mobile number'),

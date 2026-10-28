@@ -33,6 +33,7 @@ export function RegistrationForm({ event }: RegistrationFormProps) {
   const [leaderName, setLeaderName] = useState('')
   const [leaderEmail, setLeaderEmail] = useState('')
   const [leaderPhone, setLeaderPhone] = useState('')
+  const [leaderRollNumber, setLeaderRollNumber] = useState('')
 
   // Minimum additional members needed: max(0, event.team_min_size - 1)
   const minAdditionalMembers = Math.max(0, event.team_min_size - 1)
@@ -73,6 +74,10 @@ export function RegistrationForm({ event }: RegistrationFormProps) {
     }
     if (!/^[6-9]\d{9}$/.test(leaderPhone.trim())) {
       toast.error('Please enter a valid 10-digit Indian phone number')
+      return false
+    }
+    if (!leaderRollNumber.trim()) {
+      toast.error('Please enter the team leader USN')
       return false
     }
     return true
@@ -147,6 +152,7 @@ export function RegistrationForm({ event }: RegistrationFormProps) {
           leaderName,
           leaderEmail,
           leaderPhone,
+          leaderRollNumber,
           members,
         }),
       })
@@ -292,6 +298,20 @@ export function RegistrationForm({ event }: RegistrationFormProps) {
                 className="border-border bg-surface-2 text-text-primary"
               />
               <p className="text-xs text-text-tertiary">10-digit Indian mobile number</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="leaderRollNumber" className="text-text-primary">
+                Team Leader USN <span className="text-accent">*</span>
+              </Label>
+              <Input
+                id="leaderRollNumber"
+                placeholder="e.g. 1RN23CS001"
+                value={leaderRollNumber}
+                onChange={(e) => setLeaderRollNumber(e.target.value.toUpperCase())}
+                className="border-border bg-surface-2 text-text-primary uppercase"
+              />
+              <p className="text-xs text-text-tertiary">College University Seat Number (USN)</p>
             </div>
           </CardContent>
           <CardFooter className="flex justify-end border-t border-border pt-4">
@@ -460,7 +480,9 @@ export function RegistrationForm({ event }: RegistrationFormProps) {
                 </p>
                 <p>
                   <span className="text-text-secondary">Leader:</span>{' '}
-                  <span className="font-medium text-text-primary">{leaderName} ({leaderEmail}, {leaderPhone})</span>
+                  <span className="font-medium text-text-primary">
+                    {leaderName} ({leaderEmail}, {leaderPhone}){leaderRollNumber ? ` — USN: ${leaderRollNumber}` : ''}
+                  </span>
                 </p>
                 <p>
                   <span className="text-text-secondary">Total Members:</span>{' '}
