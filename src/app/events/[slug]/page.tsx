@@ -167,7 +167,7 @@ export default async function EventDetailPage({ params }: Props) {
                       <span>
                         {formatDate(event.starts_at)}
                         {event.ends_at && event.ends_at !== event.starts_at && (
-                          <> — {formatDate(event.ends_at)}</>
+                          <> to {formatDate(event.ends_at)}</>
                         )}
                       </span>
                     </li>
