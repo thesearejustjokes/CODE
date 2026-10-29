@@ -222,10 +222,10 @@ export default async function EventDetailPage({ params }: Props) {
                     Register Now
                   </Link>
                 ) : (
-                  <div className="rounded-md border border-border bg-surface-2 py-3 text-center text-sm text-text-secondary">
+                  <div className="rounded-md border border-amber-500/30 bg-amber-500/10 py-3 text-center text-sm font-medium text-amber-400">
                     {isDeadlinePassed(event.registration_deadline)
                       ? 'Registration has closed'
-                      : 'Registration is not open yet'}
+                      : 'Registrations on Hold!'}
                   </div>
                 )}
               </div>

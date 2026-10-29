@@ -60,7 +60,7 @@ Arcade.C is a premier three-round technical showdown designed exclusively for 1s
   starts_at: '2026-10-30T09:30:00+05:30',
   ends_at: '2026-10-30T16:30:00+05:30',
   registration_deadline: '2026-10-29T23:59:59+05:30',
-  registration_open: true,
+  registration_open: false,
   published: true,
   is_featured: true,
   featured_button_text: 'Register for Arcade.C',

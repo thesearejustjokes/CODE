@@ -117,7 +117,7 @@
     <!-- Entry fee -->
     <rect x="760" width="200" height="50" rx="8" fill="#171717" stroke="#2b2b2b"/>
     <text x="780" y="24" font-family="'JetBrains Mono', monospace" font-size="10" letter-spacing="1.5" fill="#888888">ENTRY FEE</text>
-    <text x="780" y="40" font-family="'Inter', sans-serif" font-size="14" font-weight="700" fill="#ffffff">&#8377;180 / Team</text>
+    <text x="780" y="40" font-family="'Inter', sans-serif" font-size="14" font-weight="700" fill="#ffffff">&#8377;100 / Team</text>
 
     <!-- Watermark status -->
     <rect x="980" width="160" height="50" rx="8" fill="#FF462D" fill-opacity="0.15" stroke="#FF462D" stroke-opacity="0.5"/>

@@ -46,7 +46,12 @@ export async function getFeaturedEvent(): Promise<Event | null> {
         if (error || !data) return ARCADE_C_EVENT
         const ev = data as Event
         if (ev.slug === ARCADE_C_EVENT.slug) {
-          return { ...ARCADE_C_EVENT, ...ev, fee_per_team: ARCADE_C_EVENT.fee_per_team }
+          return {
+            ...ARCADE_C_EVENT,
+            ...ev,
+            fee_per_team: ARCADE_C_EVENT.fee_per_team,
+            registration_open: ARCADE_C_EVENT.registration_open,
+          }
         }
         return ev
       })
@@ -144,6 +149,7 @@ export async function getEventBySlug(slug: string): Promise<Event | null> {
             ...ARCADE_C_EVENT,
             ...(data as Event),
             fee_per_team: ARCADE_C_EVENT.fee_per_team,
+            registration_open: ARCADE_C_EVENT.registration_open,
             round1: ARCADE_C_EVENT.round1,
             round2: ARCADE_C_EVENT.round2,
             round3: ARCADE_C_EVENT.round3,

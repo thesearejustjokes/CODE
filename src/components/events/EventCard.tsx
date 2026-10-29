@@ -9,10 +9,17 @@ interface EventCardProps {
 }
 
 function RegistrationBadge({ event }: { event: Event }) {
-  if (!event.registration_open || isDeadlinePassed(event.registration_deadline)) {
+  if (isDeadlinePassed(event.registration_deadline)) {
     return (
       <span className="rounded-full border border-border bg-surface-2 px-2.5 py-0.5 text-xs font-medium text-text-secondary">
         Closed
+      </span>
+    )
+  }
+  if (!event.registration_open) {
+    return (
+      <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-400">
+        On Hold
       </span>
     )
   }

@@ -123,7 +123,7 @@ export function ArcadeCAdvert() {
               <div className="rounded-lg border border-border bg-surface-2 p-3 text-center">
                 <IndianRupee className="mx-auto mb-1 h-4 w-4 text-accent" />
                 <span className="block text-[10px] uppercase tracking-wider text-text-tertiary font-mono">Entry Fee</span>
-                <span className="text-xs font-bold text-text-primary">&#8377;180 / Team</span>
+                <span className="text-xs font-bold text-text-primary">&#8377;100 / Team</span>
               </div>
             </div>
 
@@ -135,13 +135,9 @@ export function ArcadeCAdvert() {
 
             {/* Action Buttons */}
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Link
-                href="/events/arcade-c/register"
-                className="inline-flex items-center gap-2 rounded-md bg-accent px-6 py-3 text-sm font-semibold text-surface-0 transition-all hover:bg-accent-dim hover:shadow-accent focus-visible:ring-2 focus-visible:ring-accent"
-              >
-                <span>Register Your Team</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              <span className="inline-flex items-center gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-6 py-3 text-sm font-semibold text-amber-400">
+                Registrations on Hold!
+              </span>
               <Link
                 href="/events/arcade-c"
                 className="rounded-md border border-border bg-surface-2 px-6 py-3 text-sm font-medium text-text-secondary transition-colors hover:border-accent/40 hover:text-text-primary"
