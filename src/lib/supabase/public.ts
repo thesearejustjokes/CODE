@@ -51,6 +51,9 @@ export async function getFeaturedEvent(): Promise<Event | null> {
             ...ev,
             fee_per_team: ARCADE_C_EVENT.fee_per_team,
             registration_open: ARCADE_C_EVENT.registration_open,
+            starts_at: ARCADE_C_EVENT.starts_at,
+            ends_at: ARCADE_C_EVENT.ends_at,
+            registration_deadline: ARCADE_C_EVENT.registration_deadline,
           }
         }
         return ev
@@ -79,7 +82,20 @@ export async function getUpcomingEvents(limit = 6): Promise<Event[]> {
       .limit(limit)
       .then(({ data, error }) => {
         if (error || !data || data.length === 0) return FALLBACK_EVENTS
-        return data as Event[]
+        return (data as Event[]).map((ev) => {
+          if (ev.slug === ARCADE_C_EVENT.slug) {
+            return {
+              ...ARCADE_C_EVENT,
+              ...ev,
+              fee_per_team: ARCADE_C_EVENT.fee_per_team,
+              registration_open: ARCADE_C_EVENT.registration_open,
+              starts_at: ARCADE_C_EVENT.starts_at,
+              ends_at: ARCADE_C_EVENT.ends_at,
+              registration_deadline: ARCADE_C_EVENT.registration_deadline,
+            }
+          }
+          return ev
+        })
       })
 
     const result = await withTimeout(query, FALLBACK_EVENTS, 2500)
@@ -118,7 +134,21 @@ export async function getAllEventsCatalog(): Promise<{ upcoming: Event[]; past: 
       const past = (pastRes.data || []) as Event[]
 
       // If no upcoming events in DB, use our default active event
-      const finalUpcoming = upcoming.length > 0 ? upcoming : FALLBACK_EVENTS
+      let finalUpcoming = upcoming.length > 0 ? upcoming : FALLBACK_EVENTS
+      finalUpcoming = finalUpcoming.map((ev) => {
+        if (ev.slug === ARCADE_C_EVENT.slug) {
+          return {
+            ...ARCADE_C_EVENT,
+            ...ev,
+            fee_per_team: ARCADE_C_EVENT.fee_per_team,
+            registration_open: ARCADE_C_EVENT.registration_open,
+            starts_at: ARCADE_C_EVENT.starts_at,
+            ends_at: ARCADE_C_EVENT.ends_at,
+            registration_deadline: ARCADE_C_EVENT.registration_deadline,
+          }
+        }
+        return ev
+      })
       return { upcoming: finalUpcoming, past }
     })
 
@@ -150,6 +180,9 @@ export async function getEventBySlug(slug: string): Promise<Event | null> {
             ...(data as Event),
             fee_per_team: ARCADE_C_EVENT.fee_per_team,
             registration_open: ARCADE_C_EVENT.registration_open,
+            starts_at: ARCADE_C_EVENT.starts_at,
+            ends_at: ARCADE_C_EVENT.ends_at,
+            registration_deadline: ARCADE_C_EVENT.registration_deadline,
             round1: ARCADE_C_EVENT.round1,
             round2: ARCADE_C_EVENT.round2,
             round3: ARCADE_C_EVENT.round3,

@@ -49,15 +49,19 @@ export function FeaturedEvent({ event }: FeaturedEventProps) {
             )}
 
             <ul className="mb-8 space-y-2" role="list">
-              {event.starts_at && (
-                <li className="flex items-center gap-2 text-sm text-text-secondary">
-                  <Calendar size={15} className="text-accent" aria-hidden="true" />
-                  {formatDate(event.starts_at)}
-                  {event.ends_at && event.ends_at !== event.starts_at && (
-                    <> &ndash; {formatDate(event.ends_at)}</>
-                  )}
-                </li>
-              )}
+              <li className="flex items-center gap-2 text-sm text-text-secondary">
+                <Calendar size={15} className="text-accent" aria-hidden="true" />
+                {event.starts_at ? (
+                  <>
+                    {formatDate(event.starts_at)}
+                    {event.ends_at && event.ends_at !== event.starts_at && (
+                      <> &ndash; {formatDate(event.ends_at)}</>
+                    )}
+                  </>
+                ) : (
+                  'Coming Soon'
+                )}
+              </li>
               {event.venue && (
                 <li className="flex items-center gap-2 text-sm text-text-secondary">
                   <MapPin size={15} className="text-accent" aria-hidden="true" />

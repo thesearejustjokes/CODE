@@ -68,12 +68,10 @@ export function EventCard({ event }: EventCardProps) {
           </p>
         )}
         <ul className="mt-auto space-y-1.5" role="list">
-          {event.starts_at && (
-            <li className="flex items-center gap-1.5 text-xs text-text-secondary">
-              <Calendar size={12} className="shrink-0 text-accent" aria-hidden="true" />
-              {formatDate(event.starts_at)}
-            </li>
-          )}
+          <li className="flex items-center gap-1.5 text-xs text-text-secondary">
+            <Calendar size={12} className="shrink-0 text-accent" aria-hidden="true" />
+            {event.starts_at ? formatDate(event.starts_at) : 'Date: Coming Soon'}
+          </li>
           {event.venue && (
             <li className="flex items-center gap-1.5 text-xs text-text-secondary">
               <MapPin size={12} className="shrink-0 text-accent" aria-hidden="true" />

@@ -56,7 +56,7 @@ export default async function EventDetailPage({ params }: Props) {
   return (
     <PageWrapper noTopPadding>
       {/* Banner */}
-      <div className="relative h-64 w-full overflow-hidden bg-surface-1 sm:h-80 lg:h-96">
+      <div className="relative pt-16 h-72 w-full overflow-hidden bg-surface-1 sm:h-96 lg:h-[28rem]">
         {event.banner_image_url ? (
           <Image
             src={event.banner_image_url}
@@ -171,17 +171,21 @@ export default async function EventDetailPage({ params }: Props) {
                 </h2>
 
                 <ul className="mb-6 space-y-3" role="list">
-                  {event.starts_at && (
-                    <li className="flex items-start gap-2 text-sm text-text-secondary">
-                      <Calendar size={14} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
-                      <span>
-                        {formatDate(event.starts_at)}
-                        {event.ends_at && event.ends_at !== event.starts_at && (
-                          <> to {formatDate(event.ends_at)}</>
-                        )}
-                      </span>
-                    </li>
-                  )}
+                  <li className="flex items-start gap-2 text-sm text-text-secondary">
+                    <Calendar size={14} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
+                    <span>
+                      {event.starts_at ? (
+                        <>
+                          {formatDate(event.starts_at)}
+                          {event.ends_at && event.ends_at !== event.starts_at && (
+                            <> to {formatDate(event.ends_at)}</>
+                          )}
+                        </>
+                      ) : (
+                        'Coming Soon'
+                      )}
+                    </span>
+                  </li>
                   {event.venue && (
                     <li className="flex items-start gap-2 text-sm text-text-secondary">
                       <MapPin size={14} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
