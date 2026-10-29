@@ -14,7 +14,7 @@ import type { Event } from '@/types'
  * - Line 77: End time
  * - Line 78: Registration deadline
  * - Line 83: Team size (min 2, max 3)
- * - Line 85: Registration fee in INR (180)
+ * - Line 85: Registration fee in INR (100)
  * - Line 87: Eligibility criteria
  * - Line 92: Rules & guidelines
  * - Line 100: Schedule breakdown
@@ -66,7 +66,7 @@ Arcade.C is a premier three-round technical showdown designed exclusively for 1s
   featured_button_text: 'Register for Arcade.C',
   team_min_size: 2,
   team_max_size: 3,
-  fee_per_team: 180,
+  fee_per_team: 100,
   payment_methods_enabled: ['upi_manual'],
   eligibility: `• Exclusively for 1st-Year and 2nd-Year undergraduate students at RNSIT.
 • Teams must consist of 2 to 3 members.
@@ -94,7 +94,7 @@ Q: Can individuals register?
 A: Teams must have 2 to 3 members. If you don't have a team, join the C.O.D.E WhatsApp group to find teammates.
 
 Q: What is the registration fee?
-A: ₹180 per team. Registration includes entry to all 3 rounds and certificates.
+A: ₹100 per team. Registration includes entry to all 3 rounds and certificates.
 
 Q: Is prior competitive programming experience required?
 A: Basic C programming knowledge is sufficient for Round 1! Round 2 tests creative AI prompting, and Round 3 involves team auction strategy.`,
