@@ -135,15 +135,16 @@ export function ArcadeCAdvert() {
 
             {/* Action Buttons */}
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <span className="inline-flex items-center gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-6 py-3 text-sm font-semibold text-amber-400">
+              <Link
+                href="/events/arcade-c#interest-form"
+                className="inline-flex items-center gap-2 rounded-md bg-accent px-6 py-3 text-sm font-semibold text-surface-0 transition-all hover:bg-accent-dim hover:shadow-accent focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                <span>Express Interest</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <span className="inline-flex items-center gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm font-medium text-amber-400">
                 Registrations on Hold!
               </span>
-              <Link
-                href="/events/arcade-c"
-                className="rounded-md border border-border bg-surface-2 px-6 py-3 text-sm font-medium text-text-secondary transition-colors hover:border-accent/40 hover:text-text-primary"
-              >
-                Full Details &amp; Guidelines
-              </Link>
             </div>
           </div>
 

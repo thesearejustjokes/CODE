@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
-import { LayoutDashboard, Calendar, Users, ExternalLink, LogOut } from 'lucide-react'
+import { LayoutDashboard, Calendar, Users, ExternalLink, LogOut, HeartHandshake } from 'lucide-react'
 import { toast } from 'sonner'
 
 export function AdminNav() {
@@ -28,6 +28,7 @@ export function AdminNav() {
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/admin/events', label: 'Events', icon: Calendar },
     { href: '/admin/registrations', label: 'Registrations', icon: Users },
+    { href: '/admin/interests', label: 'Waitlist / Interests', icon: HeartHandshake },
   ]
 
   // Don't render admin navigation on the login page

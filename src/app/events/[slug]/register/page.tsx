@@ -1,6 +1,7 @@
 import { getEventBySlug } from '@/lib/supabase/public'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { RegistrationForm } from '@/components/registration/RegistrationForm'
+import { InterestForm } from '@/components/events/InterestForm'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
@@ -50,23 +51,21 @@ export default async function RegisterPage({ params }: Props) {
         </div>
 
         {isClosed ? (
-          <div className="rounded-lg border border-border bg-surface-1 p-8 text-center">
-            <h2 className="text-lg font-semibold text-text-primary">
-              {isDeadlinePassed(event.registration_deadline)
-                ? 'Registrations are Closed'
-                : 'Registrations on Hold!'}
-            </h2>
-            <p className="mt-2 text-sm text-text-secondary">
-              {isDeadlinePassed(event.registration_deadline)
-                ? 'The deadline to register for this event has passed.'
-                : 'Registrations are currently paused for the time being. Please check back shortly!'}
-            </p>
-            <Link
-              href="/events"
-              className="mt-6 inline-block rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-surface-0 transition-all hover:bg-accent-dim"
-            >
-              Browse Other Events
-            </Link>
+          <div className="space-y-8">
+            <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-6 text-center">
+              <h2 className="text-lg font-bold text-amber-400">
+                {isDeadlinePassed(event.registration_deadline)
+                  ? 'Registrations are Closed'
+                  : 'Registrations are Currently on Hold!'}
+              </h2>
+              <p className="mt-2 text-sm text-text-secondary">
+                {isDeadlinePassed(event.registration_deadline)
+                  ? 'The deadline to register for this event has passed.'
+                  : 'Direct registration is paused for the time being. You can express your interest below to secure a priority slot.'}
+              </p>
+            </div>
+
+            <InterestForm event={event} />
           </div>
         ) : (
           <RegistrationForm event={event} />

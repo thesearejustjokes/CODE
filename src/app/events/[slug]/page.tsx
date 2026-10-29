@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { Calendar, MapPin, Users, IndianRupee, Clock, Mail, Phone } from 'lucide-react'
 import type { Event } from '@/types'
 import { formatDate, formatDateTime, formatCurrency, isDeadlinePassed } from '@/lib/utils'
+import { InterestForm } from '@/components/events/InterestForm'
 import type { Metadata } from 'next'
 
 interface Props {
@@ -89,6 +90,15 @@ export default async function EventDetailPage({ params }: Props) {
                 {event.title}
               </h1>
             </ScrollReveal>
+
+            {/* If registrations are paused, show the Expression of Interest Form right here */}
+            {!registrationOpen && (
+              <div id="interest-form" className="mb-12">
+                <ScrollReveal>
+                  <InterestForm event={event} />
+                </ScrollReveal>
+              </div>
+            )}
 
             {event.description && (
               <Section title="About">
@@ -222,10 +232,18 @@ export default async function EventDetailPage({ params }: Props) {
                     Register Now
                   </Link>
                 ) : (
-                  <div className="rounded-md border border-amber-500/30 bg-amber-500/10 py-3 text-center text-sm font-medium text-amber-400">
-                    {isDeadlinePassed(event.registration_deadline)
-                      ? 'Registration has closed'
-                      : 'Registrations on Hold!'}
+                  <div className="space-y-3">
+                    <div className="rounded-md border border-amber-500/30 bg-amber-500/10 py-3 text-center text-sm font-medium text-amber-400">
+                      {isDeadlinePassed(event.registration_deadline)
+                        ? 'Registration has closed'
+                        : 'Registrations on Hold!'}
+                    </div>
+                    <a
+                      href="#interest-form"
+                      className="block w-full rounded-md border border-accent/40 bg-accent/10 py-2.5 text-center text-xs font-semibold text-accent transition-all hover:bg-accent hover:text-surface-0"
+                    >
+                      Express Interest / Join Waitlist &darr;
+                    </a>
                   </div>
                 )}
               </div>

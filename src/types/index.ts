@@ -149,3 +149,28 @@ export interface UpiPaymentSubmission {
   transactionReference: string
   receiptFile: File
 }
+
+// Event Interest submission (Waitlist / Expression of Interest)
+export interface EventInterest {
+  id: string
+  event_id?: string | null
+  event_slug: string
+  team_name: string
+  leader_name: string
+  leader_email: string
+  leader_phone: string
+  leader_usn: string
+  members: Array<{
+    fullName: string
+    email: string
+    college?: string
+    rollNumber?: string
+  }>
+  notes?: string | null
+  created_at: string
+  events?: {
+    id: string
+    title: string
+  }
+}
+
