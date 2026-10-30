@@ -71,7 +71,7 @@ Arcade.C is a premier three-round technical showdown designed exclusively for 1s
   eligibility: `• Exclusively for 1st-Year and 2nd-Year undergraduate students at RNSIT.
 • Teams must consist of 2 to 3 members.
 • Maximum cap: Strictly limited to 18 teams on a first-come, first-served basis.`,
-  rules: `1. All team members must report to the Data Science Department lab on 30th October 2026 by 9:15 AM with valid College ID cards.
+  rules: `1. All team members must report to the Data Science Department lab on the day of the event by 9:15 AM with valid College ID cards.
 2. AI tools, ChatGPT, Copilot, or external assistance are strictly prohibited during Round 1 and Round 3.
 3. In Round 2, only Bing Image Creator is permitted.
 4. Any malpractice or plagiarism will result in immediate disqualification.
