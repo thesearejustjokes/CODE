@@ -177,7 +177,7 @@ export default async function EventDetailPage({ params }: Props) {
                       {event.starts_at ? (
                         <>
                           {formatDate(event.starts_at)}
-                          {event.ends_at && event.ends_at !== event.starts_at && (
+                          {event.ends_at && formatDate(event.ends_at) !== formatDate(event.starts_at) && (
                             <> to {formatDate(event.ends_at)}</>
                           )}
                         </>
@@ -217,12 +217,12 @@ export default async function EventDetailPage({ params }: Props) {
                   )}
                 </ul>
 
-                {/* Countdown */}
-                {registrationOpen && event.registration_deadline && (
+                {/* Countdown to Event */}
+                {event.starts_at && new Date(event.starts_at) > new Date() && (
                   <div className="mb-6 border-t border-border pt-4">
                     <CountdownTimer
-                      targetDate={event.registration_deadline}
-                      label="Closes in"
+                      targetDate={event.starts_at}
+                      label={`${event.title.toUpperCase()} HAPPENING IN:`}
                     />
                   </div>
                 )}

@@ -12,6 +12,7 @@ interface TimeLeft {
 interface CountdownTimerProps {
   targetDate: string | Date
   label?: string
+  expiredLabel?: string
   onExpired?: () => void
 }
 
@@ -41,7 +42,7 @@ const SEPARATOR = (
   <span className="self-start pt-1 text-2xl font-bold text-text-tertiary">:</span>
 )
 
-export function CountdownTimer({ targetDate, label, onExpired }: CountdownTimerProps) {
+export function CountdownTimer({ targetDate, label, expiredLabel = 'Event has started or registration is closed.', onExpired }: CountdownTimerProps) {
   const target = new Date(targetDate)
   // Initialize to null so the server and client render the same empty state,
   // preventing the React hydration mismatch caused by the seconds ticking between
@@ -68,7 +69,7 @@ export function CountdownTimer({ targetDate, label, onExpired }: CountdownTimerP
   if (!timeLeft) {
     return (
       <p className="text-sm text-status-rejected">
-        Registration has closed.
+        {expiredLabel}
       </p>
     )
   }

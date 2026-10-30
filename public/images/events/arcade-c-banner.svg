@@ -102,7 +102,7 @@
     <rect width="240" height="50" rx="8" fill="#171717" stroke="#2b2b2b"/>
     <circle cx="25" cy="25" r="5" fill="#FF462D"/>
     <text x="42" y="24" font-family="'JetBrains Mono', monospace" font-size="10" letter-spacing="1.5" fill="#888888">EVENT DATE</text>
-    <text x="42" y="40" font-family="'Inter', sans-serif" font-size="14" font-weight="700" fill="#ffffff">30th October, 2026</text>
+    <text x="42" y="40" font-family="'Inter', sans-serif" font-size="14" font-weight="700" fill="#ffffff">5th November, 2026</text>
 
     <!-- Prize badge -->
     <rect x="260" width="230" height="50" rx="8" fill="#171717" stroke="#2b2b2b"/>

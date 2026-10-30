@@ -16,9 +16,7 @@ export function FeaturedEvent({ event }: FeaturedEventProps) {
     (!event.registration_deadline || new Date(event.registration_deadline) > new Date())
 
   const showCountdown =
-    event.registration_deadline &&
-    isRegistrationOpen &&
-    new Date(event.registration_deadline) > new Date()
+    Boolean(event.starts_at && new Date(event.starts_at) > new Date())
 
   return (
     <section className="relative overflow-hidden bg-surface-0 px-4 py-24 sm:px-6 lg:px-8">
@@ -54,7 +52,7 @@ export function FeaturedEvent({ event }: FeaturedEventProps) {
                 {event.starts_at ? (
                   <>
                     {formatDate(event.starts_at)}
-                    {event.ends_at && event.ends_at !== event.starts_at && (
+                    {event.ends_at && formatDate(event.ends_at) !== formatDate(event.starts_at) && (
                       <> &ndash; {formatDate(event.ends_at)}</>
                     )}
                   </>
@@ -90,8 +88,8 @@ export function FeaturedEvent({ event }: FeaturedEventProps) {
             {showCountdown && (
               <div className="mb-8">
                 <CountdownTimer
-                  targetDate={event.registration_deadline!}
-                  label="Registration closes in"
+                  targetDate={event.starts_at!}
+                  label={`${event.title.toUpperCase()} HAPPENING IN:`}
                 />
               </div>
             )}
