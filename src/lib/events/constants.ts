@@ -57,8 +57,8 @@ Arcade.C is a premier three-round technical showdown designed exclusively for 1s
   decidingW: `Scores from all three rounds will be tallied. The top-scoring team wins the grand cash prize. In case of a tie, Round 1 submission time will serve as the tie-breaker. All participants receive official certificates.`,
   banner_image_url: '/images/events/arcade-c-banner.png',
   venue: 'Data Science Dept Labs, RNSIT Campus, Bengaluru',
-  starts_at: '2026-11-05T09:30:00+05:30',
-  ends_at: '2026-11-05T16:30:00+05:30',
+  starts_at: null,
+  ends_at: null,
   registration_deadline: null,
   registration_open: false,
   published: true,
@@ -71,7 +71,7 @@ Arcade.C is a premier three-round technical showdown designed exclusively for 1s
   eligibility: `• Exclusively for 1st-Year and 2nd-Year undergraduate students at RNSIT.
 • Teams must consist of 2 to 3 members.
 • Maximum cap: Strictly limited to 18 teams on a first-come, first-served basis.`,
-  rules: `1. All team members must report to the Data Science Department lab on 5th November 2026 by 9:15 AM with valid College ID cards.
+  rules: `1. All team members must report to the Data Science Department lab on the announced event date by 9:15 AM with valid College ID cards.
 2. AI tools, ChatGPT, Copilot, or external assistance are strictly prohibited during Round 1 and Round 3.
 3. In Round 2, only Bing Image Creator is permitted.
 4. Any malpractice or plagiarism will result in immediate disqualification.
