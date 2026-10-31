@@ -83,7 +83,7 @@ export function ArcadeCAdvert() {
           <div className="lg:col-span-7">
             <div className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3.5 py-1 text-xs font-semibold text-accent">
               <Sparkles className="h-3.5 w-3.5" />
-              <span>Flagship Technical Arena &bull; 5th November, 2026</span>
+              <span>Flagship Technical Arena &bull; Coming Soon</span>
             </div>
 
             <h2 className="mt-4 text-4xl font-black tracking-tight text-text-primary sm:text-5xl lg:text-6xl">
@@ -105,7 +105,7 @@ export function ArcadeCAdvert() {
               <div className="rounded-lg border border-border bg-surface-2 p-3 text-center">
                 <Calendar className="mx-auto mb-1 h-4 w-4 text-accent" />
                 <span className="block text-[10px] uppercase tracking-wider text-text-tertiary font-mono">Date</span>
-                <span className="text-xs font-bold text-text-primary">5 Nov 2026</span>
+                <span className="text-xs font-bold text-text-primary">Coming Soon</span>
               </div>
 
               <div className="rounded-lg border border-border bg-surface-2 p-3 text-center">
