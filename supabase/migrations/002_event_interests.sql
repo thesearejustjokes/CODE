@@ -17,6 +17,10 @@ CREATE INDEX IF NOT EXISTS idx_event_interests_event_slug ON event_interests (ev
 CREATE INDEX IF NOT EXISTS idx_event_interests_email ON event_interests (leader_email);
 CREATE INDEX IF NOT EXISTS idx_event_interests_created_at ON event_interests (created_at DESC);
 
+-- Prevent duplicate leader email per event
+CREATE UNIQUE INDEX idx_event_interests_unique_leader_per_event
+  ON event_interests (event_id, lower(leader_email));
+
 -- Enable RLS
 ALTER TABLE event_interests ENABLE ROW LEVEL SECURITY;
 

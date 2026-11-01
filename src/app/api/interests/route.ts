@@ -44,6 +44,25 @@ export async function POST(request: Request) {
       eventId = eventData.id
     }
 
+    // ── Duplicate check ──────────────────────────────────────────────────────
+    const { data: existing } = await supabase
+      .from('event_interests')
+      .select('id')
+      .eq('event_slug', eventSlug)
+      .or(`leader_email.eq.${leaderEmail},leader_phone.eq.${leaderPhone}`)
+      .maybeSingle()
+
+    if (existing) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'You have already registered your interest. We already have your details!',
+        },
+        { status: 409 }
+      )
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     // Insert into event_interests
     const { data: inserted, error: insertError } = await supabase
       .from('event_interests')

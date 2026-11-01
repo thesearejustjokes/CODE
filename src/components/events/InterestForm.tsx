@@ -131,6 +131,12 @@ export function InterestForm({ event, onSuccess }: InterestFormProps) {
 
       const data = await res.json()
 
+      if (res.status === 409) {
+        setError(data.error)
+        toast.error(data.error)
+        return
+      }
+
       if (!res.ok || !data.success) {
         throw new Error(data.details || data.error || 'Failed to submit expression of interest')
       }
