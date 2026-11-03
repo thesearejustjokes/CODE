@@ -143,7 +143,7 @@ export function ArcadeCAdvert() {
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <span className="inline-flex items-center gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm font-medium text-amber-400">
-                Registrations on Hold!
+                Registrations will open soon!
               </span>
             </div>
           </div>

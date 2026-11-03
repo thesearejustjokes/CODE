@@ -193,13 +193,13 @@ export function InterestForm({ event, onSuccess }: InterestFormProps) {
       <CardHeader>
         <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-1">
           <Sparkles className="h-3.5 w-3.5" />
-          <span>Priority Waitlist / Interest Form</span>
+          <span>Priority Waitlist</span>
         </div>
         <CardTitle className="text-xl sm:text-2xl text-text-primary">
           Interested in participating in {event.title}?
         </CardTitle>
         <CardDescription className="text-text-secondary">
-          Registrations are currently on hold. Drop your team details below and you will get first priority as soon as slots open!
+          Registrations will open soon. Drop your team details below and you will get first priority as soon as slots open!
         </CardDescription>
 
         {/* Stepper */}

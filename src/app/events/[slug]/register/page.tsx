@@ -56,7 +56,7 @@ export default async function RegisterPage({ params }: Props) {
               <h2 className="text-lg font-bold text-amber-400">
                 {isDeadlinePassed(event.registration_deadline)
                   ? 'Registrations are Closed'
-                  : 'Registrations are Currently on Hold!'}
+                  : 'Registrations will open soon!'}
               </h2>
               <p className="mt-2 text-sm text-text-secondary">
                 {isDeadlinePassed(event.registration_deadline)

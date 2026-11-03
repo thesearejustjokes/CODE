@@ -240,7 +240,7 @@ export default async function EventDetailPage({ params }: Props) {
                     <div className="rounded-md border border-amber-500/30 bg-amber-500/10 py-3 text-center text-sm font-medium text-amber-400">
                       {isDeadlinePassed(event.registration_deadline)
                         ? 'Registration has closed'
-                        : 'Registrations on Hold!'}
+                        : 'Registrations will open soon!'}
                     </div>
                     <a
                       href="#interest-form"

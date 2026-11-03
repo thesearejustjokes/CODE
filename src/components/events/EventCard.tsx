@@ -19,7 +19,7 @@ function RegistrationBadge({ event }: { event: Event }) {
   if (!event.registration_open) {
     return (
       <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-400">
-        On Hold
+        Join Waitlist
       </span>
     )
   }
